@@ -9,9 +9,14 @@
 /* Begin PBXBuildFile section */
 		0C80B921A6F3F58F76C31292 /* libPods-FlayChatBar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-FlayChatBar.a */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		364F509EDD6E42DFA32BA0A6 /* Inter_18pt-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AED361832E5149ABA3E8808A /* Inter_18pt-Regular.ttf */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		91E2C904DAA14CD7B8F2F500 /* Inter_18pt-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C300C913AE774E5B986694CF /* Inter_18pt-Bold.ttf */; };
 		9B987C3FC1617190B2CAD8B9 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
+		9F36734CD9B54A6FA8945B2A /* Inter_18pt-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FE04811EE8FF49A5B34ADAF3 /* Inter_18pt-Medium.ttf */; };
+		B5DFB1C4DA0D41339253EC3B /* Inter_18pt-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E12A2D69909B4AA2B5D0D890 /* Inter_18pt-ExtraBold.ttf */; };
+		F4DADC2608A3468D97167188 /* Inter_18pt-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 95268A6A0F6E45D9B6C3CB78 /* Inter_18pt-SemiBold.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,7 +29,12 @@
 		5DCACB8F33CDC322A6C60F78 /* libPods-FlayChatBar.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-FlayChatBar.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = FlayChatBar/AppDelegate.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = FlayChatBar/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		95268A6A0F6E45D9B6C3CB78 /* Inter_18pt-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter_18pt-SemiBold.ttf"; path = "../src/Assets/fonts/Inter_18pt-SemiBold.ttf"; sourceTree = "<group>"; };
+		AED361832E5149ABA3E8808A /* Inter_18pt-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter_18pt-Regular.ttf"; path = "../src/Assets/fonts/Inter_18pt-Regular.ttf"; sourceTree = "<group>"; };
+		C300C913AE774E5B986694CF /* Inter_18pt-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter_18pt-Bold.ttf"; path = "../src/Assets/fonts/Inter_18pt-Bold.ttf"; sourceTree = "<group>"; };
+		E12A2D69909B4AA2B5D0D890 /* Inter_18pt-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter_18pt-ExtraBold.ttf"; path = "../src/Assets/fonts/Inter_18pt-ExtraBold.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		FE04811EE8FF49A5B34ADAF3 /* Inter_18pt-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter_18pt-Medium.ttf"; path = "../src/Assets/fonts/Inter_18pt-Medium.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +85,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				BE120F01FB7943F5BEC5D13A /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -96,6 +107,19 @@
 				5709B34CF0A7D63546082F79 /* Pods-FlayChatBar.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		BE120F01FB7943F5BEC5D13A /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				E12A2D69909B4AA2B5D0D890 /* Inter_18pt-ExtraBold.ttf */,
+				C300C913AE774E5B986694CF /* Inter_18pt-Bold.ttf */,
+				FE04811EE8FF49A5B34ADAF3 /* Inter_18pt-Medium.ttf */,
+				95268A6A0F6E45D9B6C3CB78 /* Inter_18pt-SemiBold.ttf */,
+				AED361832E5149ABA3E8808A /* Inter_18pt-Regular.ttf */,
+			);
+			name = Resources;
+			path = "";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -161,6 +185,11 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				9B987C3FC1617190B2CAD8B9 /* PrivacyInfo.xcprivacy in Resources */,
+				B5DFB1C4DA0D41339253EC3B /* Inter_18pt-ExtraBold.ttf in Resources */,
+				91E2C904DAA14CD7B8F2F500 /* Inter_18pt-Bold.ttf in Resources */,
+				9F36734CD9B54A6FA8945B2A /* Inter_18pt-Medium.ttf in Resources */,
+				F4DADC2608A3468D97167188 /* Inter_18pt-SemiBold.ttf in Resources */,
+				364F509EDD6E42DFA32BA0A6 /* Inter_18pt-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

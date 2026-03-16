@@ -1,0 +1,33 @@
+export { default as MocktailIcon } from '../Icons/Mocktail.svg';
+export { default as BackIcon } from '../Icons/back.svg';
+export { default as Back2Icon } from '../Icons/back2.svg';
+export { default as CheckboxIcon } from '../Icons/checkbox.svg';
+export { default as ChatIcon } from '../Icons/chat.svg';
+export { default as ExploreIcon } from '../Icons/explore.svg';
+export { default as HomeIcon } from '../Icons/home.svg';
+export { default as AccountIcon } from '../Icons/account.svg';
+export { default as NotificationIcon } from '../Icons/notification.svg';
+export { default as LocationIcon } from '../Icons/location.svg';
+export { default as SearchIcon } from '../Icons/search.svg';
+
+export { default as RightArrowIcon } from '../Icons/rightArrow.svg';
+export { default as CrossIcon } from '../Icons/cross.svg';
+export { default as LogoutIcon } from '../Icons/logout.svg';
+export { default as TermIcon } from '../Icons/term.svg';
+export { default as PrivacyIcon } from '../Icons/privacy.svg';
+export { default as ProfileIcon } from '../Icons/profile.svg';
+export { default as SupportIcon } from '../Icons/support.svg';
+export { default as DeleteIcon } from '../Icons/delete.svg';
+
+export { default as CallIcon } from '../Icons/call.svg';
+export { default as VideoIcon } from '../Icons/video.svg';
+export { default as PlusIcon } from '../Icons/plus.svg';
+export { default as MusicIcon } from '../Icons/music.svg';
+export { default as MicIcon } from '../Icons/mic.svg';
+export { default as SmileIcon } from '../Icons/smile.svg';
+export { default as LikeIcon } from '../Icons/like.svg';
+export { default as CameraIcon } from '../Icons/camera.svg';
+export { default as ImageIcon } from '../Icons/image.svg';
+export { default as SendIcon } from '../Icons/send.svg';
+export { default as ArrowLeftIcon } from '../Icons/arrowLeft.svg';
+export { default as ArrowRightIcon } from '../Icons/arrowRight.svg';
