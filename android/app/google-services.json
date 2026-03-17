@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "934788565108",
+    "project_id": "flaychatbar-b6ae4",
+    "storage_bucket": "flaychatbar-b6ae4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:934788565108:android:b2a5cf0fba2de4b7d46921",
+        "android_client_info": {
+          "package_name": "com.flaychatbar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPaXyW6_kCil7mRSqy70QjGarjdwIWMzE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
