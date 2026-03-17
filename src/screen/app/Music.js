@@ -155,6 +155,7 @@ const handleSeeMore = () => {
       </View> */}
       <FlatList
       data={displayedSongs}
+      showsVerticalScrollIndicator={false}
       ListFooterComponent={()=><View>
        {showSeeMore&& <View>
         <TouchableOpacity style={styles.seeMoreButton} onPress={handleSeeMore}>

@@ -10,8 +10,9 @@ const Spinner = () => {
   const isLoading = useSelector(
     state =>
       state.auth.isLoading 
-    // ||state.campaign.isLoading ||
-    //   state.product.isLoading
+    ||state.connection.isLoading ||
+      state.menu.isLoading ||
+      state.music.isLoading 
   );
   if (!isLoading) {
     return <></>;

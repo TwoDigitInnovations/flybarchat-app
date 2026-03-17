@@ -235,6 +235,7 @@ export default function Banner() {
 
         <FlatList
         data={bannerList}
+        showsVerticalScrollIndicator={false}
         style={styles.scrollContent}
         renderItem={({item, index})=><OfferCard key={item._id} offer={item} index={index} />}
         />
