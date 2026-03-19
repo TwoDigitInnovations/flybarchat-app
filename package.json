@@ -21,6 +21,7 @@
     "debug-build": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/ && cd android && ./gradlew clean && ./gradlew assembleDebug && cd .."
   },
   "dependencies": {
+    "@notifee/react-native": "^9.1.8",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-community/datetimepicker": "^8.6.0",
     "@react-native-community/netinfo": "^11.5.2",
@@ -39,6 +40,7 @@
     "react-native-element-dropdown": "^2.12.4",
     "react-native-image-picker": "^8.2.1",
     "react-native-incall-manager": "^4.2.1",
+    "react-native-onesignal": "^5.3.6",
     "react-native-peerjs": "^1.0.4",
     "react-native-permissions": "^5.4.4",
     "react-native-safe-area-context": "^5.5.2",

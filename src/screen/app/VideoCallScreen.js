@@ -48,16 +48,16 @@ import {
     mediaDevices,
 } from 'react-native-webrtc';
 import { io } from 'socket.io-client';
-import IncomingCallScreen from '../Screens/IncommingCallScreen'; // adjust path if needed
-import { SOCKET_URL } from '../../utils/config';
+import IncomingCallScreen from './IncommingCallScreen'; // adjust path if needed
+import { SOCKET_URL } from '../../../utils/config';
+import {TURN_CREDENTIAL} from '../../../utils/config'
 
 // ─── CONFIGURATION ────────────────────────────────────────────────────────────
 const SIGNALING_SERVER_URL = SOCKET_URL;
 
-const STUN_SERVER_URL = 'stun:turn.2digitinnovations.com:3478';
-const TURN_SERVER_URL = 'turn:turn.2digitinnovations.com:3478';
+const STUN_SERVER_URL = 'stun:turn.flaychatbar.com:3478';
+const TURN_SERVER_URL = 'turn:turn.flaychatbar.com:3478';
 const TURN_USERNAME = (Math.floor(Date.now() / 1000) + 3600).toString();
-const TURN_CREDENTIAL = '2digitVideoCall';
 
 const ICE_SERVERS = [
     { urls: STUN_SERVER_URL },
