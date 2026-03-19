@@ -19,38 +19,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import { socket } from '../../../utils'
 import { checkConnection } from '../../../redux/connection/connectionAction'
 import moment from 'moment'
+import { io } from 'socket.io-client';
+import { SOCKET_URL } from '../../../utils/config';
+import IncomingCallScreen from './IncommingCallScreen'
+import InCallManager from 'react-native-incall-manager';
 
 
 const ChatDetail = (props) => {
   const dispatch = useDispatch();
-  // Mock chat messages
-  const [messages, setMessages] = useState([
-    {
-      id: '1',
-      type: 'date',
-      text: 'Today',
-    },
-    {
-      id: '2',
-      type: 'received',
-      text: 'Hey! how are you doing today?🤔',
-      time: '10:15 AM',
-      user: user,
-    },
-    {
-      id: '3',
-      type: 'sent',
-      text: 'Hey, I am good What about You?',
-      time: '10:15 AM',
-    },
-    {
-      id: '4',
-      type: 'received',
-      text: "I am good too, what's your favourite cocktail?",
-      time: '10:15 AM',
-      user: user,
-    },
-  ])
 
 const routeData = props?.route?.params;
 const [connectionId, setConnectionId] = useState(routeData?.connection || null);
@@ -71,13 +47,13 @@ const [connectionId, setConnectionId] = useState(routeData?.connection || null);
 useEffect(() => {
   if (connectionId) {
     getchat();
-    socket.emit("join", connectionId);
+    socket.emit("join_chat", connectionId);
     setTimeout(() => {
       listRef.current?.scrollToEnd({ animated: true });
     }, 1500);
 
     return () => {
-      socket.off('join');
+      socket.off('join_chat');
       socket.off('connection');
       socket.off('messages');
       socket.off('allmessages');
@@ -85,31 +61,11 @@ useEffect(() => {
     };
   }
 }, [connectionId]);
-  // useEffect(() => {
-  //   getchat()
-  //   socket.on('connection', () => {
-  //     console.log('soket id from appjs ->', socket.id);
-  //   });
-
-  //   if (connectionId) {
-  //       socket.emit('join', connectionId)}
-  //   setTimeout(() => {
-  //     listRef.current?.scrollToEnd({ animated: true });
-  //   }, 2000);
-
-  //   return () => {
-  //     socket.off('join');
-  //     socket.off('connection');
-  //     socket.off('messages');
-  //     socket.off('allmessages');
-  //     socket.off('joined-user');
-  //   };
-  // }, []);
   useEffect(() => {
     getchat()
     socket.on("connectionCreated", (id) => {
   setConnectionId(id);
-  socket.emit("join", id);
+  socket.emit("join_chat", id);
 });
     socket.on('messages', msg => {
       // console.log('===>', msg);
@@ -174,13 +130,13 @@ useEffect(() => {
   };
 
   const renderMessage = ({ item }) => {
-    if (item.type === 'date') {
-      return (
-        <View style={styles.dateBadge}>
-          <Text style={styles.dateText}>{item.text}</Text>
-        </View>
-      )
-    }
+    // if (item.type === 'date') {
+    //   return (
+    //     <View style={styles.dateBadge}>
+    //       <Text style={styles.dateText}>{item.text}</Text>
+    //     </View>
+    //   )
+    // }
 
     if (item?.sender?._id == user?._id) {
       return (
@@ -203,7 +159,7 @@ useEffect(() => {
           <View style={styles.receivedBubble}>
             <Text style={styles.receivedText}>{item?.message}</Text>
           </View>
-          <Text style={styles.receivedTime}>{moment(item?.lastMessage?.msgtime).format('DD-MM-YY hh:mm A')}</Text>
+          <Text style={styles.sentTime}>{moment(item?.lastMessage?.msgtime).format('DD-MM-YY hh:mm A')}</Text>
         </View>
       </View>
     )
@@ -235,6 +191,35 @@ useEffect(() => {
         };
       }, []);
 
+      const generateRoomId = (id1, id2) => [id1, id2].sort().join('__');
+
+const handleVideoCall = async () => {
+    const roomId = generateRoomId(user?._id, routeData._id);
+
+    try {
+        await fetch(`${SOCKET_URL}/notify-call`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                callerId: user?._id,
+                callerName: user?.name,
+                calleeId: routeData._id,
+                roomId,
+            }),
+        });
+    } catch (err) {
+        console.log('[ChatDetail] notify-call error:', err.message);
+    }
+
+    navigate('VideoCall', {
+        roomId,
+        calleeId: routeData._id,
+        calleeName: routeData.name || routeData.username,
+        callerName: user?.name,
+        isInitiator: true,
+    });
+};
+
   return (
     <KeyboardAvoidingView 
       style={styles.container}
@@ -264,7 +249,7 @@ useEffect(() => {
             <CallIcon height={20} width={20}/>
           </TouchableOpacity>
           
-          <TouchableOpacity style={styles.headerIconButton}>
+          <TouchableOpacity style={styles.headerIconButton} onPress={()=>handleVideoCall()}>
             <VideoIcon height={20} width={20}/>
           </TouchableOpacity>
         </View>
@@ -355,7 +340,7 @@ export default ChatDetail
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: Constants.light_black,
   },
   header: {
     flexDirection: 'row',
@@ -438,46 +423,46 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   receivedContent: {
-    flex: 1,
-    Width: '100%',
+    // flex: 1,
+    // Width: '100%',
+    alignSelf: 'flex-start',  // shrinks to content width
+    maxWidth: '75%',
   },
   receivedBubble: {
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#2E3537',
     padding: 14,
     borderRadius: 16,
     borderBottomLeftRadius: 4,
     maxWidth: '80%',
+    alignSelf:'flex-start'
   },
   receivedText: {
-    color: '#ffffff',
-    fontSize: 15,
+    color: Constants.white,
+    fontSize: 14,
+    fontFamily:FONTS.Regular,
     lineHeight: 20,
-  },
-  receivedTime: {
-    color: '#6a6a6a',
-    fontSize: 11,
-    marginTop: 4,
-    marginLeft: 8,
   },
   sentMessageContainer: {
     alignItems: 'flex-end',
     marginBottom: 15,
   },
   sentBubble: {
-    backgroundColor: '#8a8a8a',
+    backgroundColor: '#D9D9D9BF',
     padding: 14,
     borderRadius: 16,
     borderBottomRightRadius: 4,
     maxWidth: '80%',
   },
   sentText: {
-    color: '#000000',
-    fontSize: 15,
+    color: Constants.black,
+    fontSize: 14,
+    fontFamily:FONTS.Regular,
     lineHeight: 20,
   },
   sentTime: {
-    color: '#6a6a6a',
+    color: Constants.white,
     fontSize: 11,
+    fontFamily:FONTS.Regular,
     marginTop: 4,
     marginRight: 8,
   },
@@ -488,7 +473,7 @@ const styles = StyleSheet.create({
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#4a4a4a',
+    backgroundColor: '#A7ACAE59',
     paddingVertical: 14,
     paddingHorizontal: 16,
     borderRadius: 12,
@@ -510,7 +495,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 12,
     paddingBottom: 30,
-    backgroundColor: '#1a1a1a',
+    // backgroundColor: '#1a1a1a',
     borderTopWidth: 1,
     borderTopColor: '#2a2a2a',
   },
@@ -525,7 +510,7 @@ const styles = StyleSheet.create({
   },
   textInputContainer: {
     flex: 1,
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#2E3537',
     borderRadius: 20,
     paddingHorizontal: 16,
     // paddingVertical: 8,
@@ -534,8 +519,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   textInput: {
-    color: '#ffffff',
-    fontSize: 15,
+    color: Constants.white,
+    fontSize: 14,
+    fontFamily:FONTS.Regular,
     maxHeight: 100,
   },
   sendButton: {

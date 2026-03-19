@@ -1,6 +1,24 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature android:name="android.hardware.audio.output" />
+    <uses-feature android:name="android.hardware.microphone" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
       android:name=".MainApplication"
@@ -23,5 +41,50 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
+
+      <!-- Full-screen incoming call UI — pure native, no React needed -->
+    <!-- Launched via setFullScreenIntent() from FlayChatBarFirebaseMessagingService -->
+    <activity
+      android:name=".CallActivity"
+      android:label="Incoming Call"
+      android:launchMode="singleInstance"
+      android:showOnLockScreen="true"
+      android:turnScreenOn="true"
+      android:showWhenLocked="true"
+      android:excludeFromRecents="true"
+      android:exported="true"
+      android:screenOrientation="portrait"
+      android:theme="@style/AppTheme" />
+
+    <!-- Custom FCM service — data-only messages call onMessageReceived even when killed -->
+    <service
+      android:name=".FlayChatBarFirebaseMessagingService"
+      android:exported="false">
+      <intent-filter>
+        <action android:name="com.google.firebase.MESSAGING_EVENT" />
+      </intent-filter>
+    </service>
+
+    <!-- Loops ringtone + vibration for incoming calls -->
+    <service
+      android:name=".RingtoneService"
+      android:exported="false"
+      android:foregroundServiceType="mediaPlayback" />
+
+    <!-- Decline button receiver -->
+    <receiver
+      android:name=".DeclineReceiver"
+      android:exported="false" />
+
+    <!-- FCM default icon -->
+    <meta-data
+      android:name="com.google.firebase.messaging.default_notification_icon"
+      android:resource="@mipmap/ic_launcher" />
+
+    <!-- Notifee foreground service -->
+    <service
+      android:name="app.notifee.core.ForegroundService"
+      android:exported="false" />
+
     </application>
 </manifest>
