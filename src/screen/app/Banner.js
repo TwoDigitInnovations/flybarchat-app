@@ -288,11 +288,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 8,
     marginBottom: 16,
-    shadowColor: '#D4A017',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
-    elevation: 8,
   },
   menuBadgeText: {
     color: Constants.black,

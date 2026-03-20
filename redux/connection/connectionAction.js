@@ -7,6 +7,7 @@ export const checkConnection = createAsyncThunk(
   'connection/checkConnection',
   async (params, thunkAPI) => {
     try {
+      console.log(params)
       const {data}= await axios.post(`connection/checkConnection`,params);
       return data;
     } catch (error) {

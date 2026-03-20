@@ -1,4 +1,4 @@
-// const prodUrl = 'http://192.168.0.215:8001/';
+// const prodUrl = 'http://192.168.0.207:8001/';
 //  const prodUrl = 'http://10.112.185.202:8001/';
 const prodUrl = 'https://api.flaychatbar.com/';
 // const prodUrl = 'http://10.113.109.141:8001/';

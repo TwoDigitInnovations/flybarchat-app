@@ -222,25 +222,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  backArrow: {
-    color: '#FFFFFF',
-    fontSize: 30,
-    fontWeight: '300',
-    lineHeight: 34,
-    marginTop: -4,
-  },
   headerTitleWrap: {
     flex: 1,
     alignItems: 'center',
   },
   headerTitle: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    fontWeight: '700',
-    letterSpacing: 0.3,
+    color: Constants.white,
+    fontSize: 18,
+    fontFamily:FONTS.SemiBold,
   },
   headerSubtitle: {
-    color: '#888888',
+    color: Constants.white,
+    fontFamily:FONTS.Medium,
     fontSize: 12,
     marginTop: 2,
     letterSpacing: 0.1,
@@ -331,16 +324,15 @@ const styles = StyleSheet.create({
     justifyContent:'center'
   },
   songTitle: {
-    color: '#FFFFFF',
-    fontSize: 15,
-    fontWeight: '600',
-    letterSpacing: 0.1,
+    color: Constants.white,
+    fontSize: 14,
+    fontFamily:FONTS.Medium,
     marginBottom: 3,
   },
   songArtist: {
-    color: '#888888',
+    color: Constants.customgrey2,
+    fontFamily:FONTS.Regular,
     fontSize: 12,
-    letterSpacing: 0.1,
   },
   songAction: {
     flexDirection: 'row',
@@ -348,15 +340,14 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   playIcon: {
-    color: '#AAAAAA',
+    color: Constants.customgrey3,
     fontSize: 12,
     marginRight: 6,
   },
   songPrice: {
-    color: '#FFFFFF',
+    color: Constants.white,
     fontSize: 14,
-    fontWeight: '700',
-    letterSpacing: 0.2,
+    fontFamily:FONTS.SemiBold,
   },
 
   // See more
@@ -401,9 +392,8 @@ const styles = StyleSheet.create({
     marginBottom:15
   },
   ctaText: {
-    color: '#FFFFFF',
-    fontSize: 17,
-    fontWeight: '700',
-    letterSpacing: 0.3,
+    color: Constants.white,
+    fontSize: 16,
+    fontFamily:FONTS.SemiBold,
   },
 });

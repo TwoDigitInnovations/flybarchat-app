@@ -36,6 +36,7 @@ import {
     Animated,
     PanResponder,
     Dimensions,
+    Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import InCallManager from 'react-native-incall-manager';
@@ -51,6 +52,8 @@ import { io } from 'socket.io-client';
 import IncomingCallScreen from './IncommingCallScreen'; // adjust path if needed
 import { SOCKET_URL } from '../../../utils/config';
 import {TURN_CREDENTIAL} from '../../../utils/config'
+import { useSelector } from 'react-redux';
+import FastImage from 'react-native-fast-image';
 
 // ─── CONFIGURATION ────────────────────────────────────────────────────────────
 const SIGNALING_SERVER_URL = SOCKET_URL;
@@ -87,13 +90,66 @@ const PEER_CONNECTION_CONFIG = {
  */
 const VideoCallScreen = ({
     roomId = 'room-1',
-    userId = 'user-1',
+    // userId = 'user-1',
     calleeId = 'user-2',
     calleeName = 'Remote User',
-    callerName = 'Me',
+    // callerName = 'Me',
     isInitiator = null,  // null=detect from server, true=caller, false=callee
     onHangup,
 }) => {
+
+    const GIF_REQUIRE     = require('../../Assets/Gif/Drink.gif');
+    const GIF_SOURCE      = Image.resolveAssetSource(GIF_REQUIRE); // → { uri }
+    const GIF_DURATION_MS = 10000; 
+    const [gifPhase, setGifPhase] = useState('playing');
+    const gifOpacity = useRef(new Animated.Value(1)).current;
+    const gifScale   = useRef(new Animated.Value(1)).current;
+
+    useEffect(() => {
+        isMountedRef.current = true;
+        if (!isInitiator) {
+            setGifPhase('done')
+            isMountedRef.current = false;
+        }
+
+        const timer = setTimeout(() => {
+            Animated.parallel([
+                Animated.timing(gifOpacity, { toValue: 0,    duration: 500, useNativeDriver: true }),
+                Animated.timing(gifScale,   { toValue: 1.08, duration: 500, useNativeDriver: true }),
+            ]).start(() => {
+                // Animation done → unmount overlay → trigger call
+                safeSet(() => setGifPhase('done'));
+            });
+        }, GIF_DURATION_MS);
+
+        return () => {
+            isMountedRef.current = false;
+            clearTimeout(timer);
+        };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // ── gifPhase='done' → start or answer call ─────────────────────────────────
+    useEffect(() => {
+        if (gifPhase !== 'done') return;
+        if (callStartedRef.current) return;
+
+        const delay = Platform.OS === 'android' ? 500 : 100;
+
+        if (isInitiator === true) {
+            // CALLER: send notification + join room as initiator
+            const t = setTimeout(() => startCall(), delay);
+            return () => clearTimeout(t);
+        } else {
+            // RECEIVER (false) or auto-detect (null): join room as callee
+            const t = setTimeout(() => answerCall(roomId), delay);
+            return () => clearTimeout(t);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [gifPhase]);
+
+
+
     // ── State ──────────────────────────────────────────────────────────────────
     const [callStatus, setCallStatus] = useState('idle');
     const [localStream, setLocalStream] = useState(null);
@@ -104,6 +160,10 @@ const VideoCallScreen = ({
     const [isSpeakerOn, setIsSpeakerOn] = useState(true);
     const [incomingCall, setIncomingCall] = useState(null);
     // incomingCall: { callerName, roomId } | null
+
+    const user = useSelector(state => state.auth.user);
+    const userId= user?._id||'user-1'
+    const callerName= user?.name||'Me'
 
     // ── Refs ───────────────────────────────────────────────────────────────────
     const socketRef = useRef(null);
@@ -116,6 +176,7 @@ const VideoCallScreen = ({
     const isInitiatorRef = useRef(false); // true = caller, false = callee
 
     const log = useCallback((...args) => console.log('[VideoCall]', ...args), []);
+    const safeSet = useCallback((fn) => { if (isMountedRef.current) fn(); }, []);
     const safeSetState = useCallback((setter) => { if (isMountedRef.current) setter(); }, []);
 
     // ── Animation refs ─────────────────────────────────────────────────────────
@@ -840,6 +901,25 @@ const VideoCallScreen = ({
                     </View>
                 </SafeAreaView>
             </Animated.View>
+            {gifPhase === 'playing' && isInitiator&& (
+                <Animated.View
+                    pointerEvents="none"
+                    style={[
+                        S.gifOverlay,
+                        { opacity: gifOpacity, transform: [{ scale: gifScale }] },
+                    ]}
+                >
+                    <FastImage
+                        source={{
+                            uri:      GIF_SOURCE.uri,
+                            priority: FastImage.priority.high,
+                            cache:    FastImage.cacheControl.immutable,
+                        }}
+                        style={StyleSheet.absoluteFillObject}
+                        resizeMode={FastImage.resizeMode.cover}
+                    />
+                </Animated.View>
+            )}
         </View>
     );
 };
@@ -849,6 +929,12 @@ const { width: SW, height: SH } = Dimensions.get('window');
 
 const S = StyleSheet.create({
     root: { flex: 1, backgroundColor: '#000' },
+
+     gifOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        zIndex: 999,
+        backgroundColor: '#000',
+    },
 
     // Waiting background
     waitBg: {

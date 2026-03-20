@@ -1,15 +1,4 @@
-import { 
-  StyleSheet, 
-  Text, 
-  View, 
-  Image, 
-  TouchableOpacity, 
-  TextInput,
-  FlatList,
-  KeyboardAvoidingView,
-  Platform,
-  Keyboard,
-  Dimensions,
+import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput,FlatList,KeyboardAvoidingView,Platform,Keyboard,Dimensions,
 } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { Back2Icon, CallIcon, LikeIcon, MicIcon, MusicIcon, PlusIcon, SendIcon, SmileIcon, VideoIcon,  } from '../../Assets/theme'
@@ -29,6 +18,7 @@ const ChatDetail = (props) => {
   const dispatch = useDispatch();
 
 const routeData = props?.route?.params;
+console.log('routeData',routeData)
 const [connectionId, setConnectionId] = useState(routeData?.connection || null);
 
   const user = useSelector(state => state.auth.user);
@@ -38,6 +28,7 @@ const [connectionId, setConnectionId] = useState(routeData?.connection || null);
   const [list, setlist] = useState([]);
   useEffect(() => {
   if (!connectionId) {
+    console.log('enter')
     getConnection({
       sender: user?._id,
       receiver: routeData?._id,
@@ -197,6 +188,7 @@ const handleVideoCall = async () => {
     const roomId = generateRoomId(user?._id, routeData._id);
 
     try {
+      console.log(user,routeData?._id,roomId)
         await fetch(`${SOCKET_URL}/notify-call`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -423,7 +415,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   receivedContent: {
-    // flex: 1,
+    flex: 1,
     // Width: '100%',
     alignSelf: 'flex-start',  // shrinks to content width
     maxWidth: '75%',

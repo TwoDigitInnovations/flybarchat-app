@@ -24,6 +24,8 @@ import {
   requestPermission,
 } from '@react-native-firebase/messaging';
 import { socket } from './utils';
+import IncomingCallScreen from './src/screen/app/IncommingCallScreen';
+import InCallManager from 'react-native-incall-manager';
 // import i18n from './i18n';
 // import { setLanguage } from './redux/location/locationSlice';
 
@@ -35,15 +37,66 @@ const App = () => {
   //   OneSignal.initialize(APP_ID);
   //   OneSignal.Notifications.requestPermission(true);
   // }, [OneSignal]);
-
+  const [incomingCall, setIncomingCall] = useState(null);
+const user = store.getState().auth.user;
   useEffect(()=>{
     // checkLng()
     store.dispatch(checkLogin()).unwrap()
-      .finally(() => {
-        // setTimeout(() => {
-        //   Splash.hide();
-        // }, 500);
-      });
+      .then(async() => {
+            // ✅ User is now in Redux
+            const user = store.getState().auth.user;
+            console.log('[App] User loaded:', user?._id);
+            
+            try {
+    const pending = await AsyncStorage.getItem('pendingCall');
+    if (pending) {
+        const callData = JSON.parse(pending);
+        await AsyncStorage.removeItem('pendingCall');
+        console.log('[App] Pending call:', callData);
+
+        setTimeout(() => {
+            if (callData.action === 'answer') {
+              InCallManager.stopRingtone();
+                setIncomingCall(null);
+                console.log('enter===>')
+                // ✅ Go directly to VideoCall — skip IncomingCallScreen
+                const freshUser = store.getState().auth.user;
+                navigate('VideoCall', {
+                    roomId: callData.roomId,
+                    calleeId: callData.callerId,
+                    calleeName: callData.callerName,
+                    callerName: freshUser?.name || 'Me',
+                    isInitiator: false,
+                });
+            } else {
+                // ✅ Show IncomingCallScreen
+                setIncomingCall({
+                    callerName: callData.callerName,
+                    callerId: callData.callerId,
+                    roomId: callData.roomId,
+                });
+            }
+        }, 1000);
+    }
+} catch (e) {
+    console.log('[App] pendingCall error:', e.message);
+}
+
+
+            // Now safe to register FCM
+            if (Platform.OS === 'android') {
+                _refreshAndRegisterFcmToken();
+            }
+            
+            // Register socket presence
+            if (user?._id && socket.connected) {
+                socket.emit('user-online', { userId: user._id, name: user.name });
+            }
+        });
+        _initPushServices();
+        if (Platform.OS === 'android') {
+      _requestMediaPermissions();
+    }
   },[])
 
   const checkLng = async () => {
@@ -55,12 +108,42 @@ const App = () => {
       }
     };
 
-    useEffect(() => {
-    _initPushServices();
-    if (Platform.OS === 'android') {
-      _requestMediaPermissions();
-    }
-  }, []);
+
+  useEffect(() => {
+    socket.on('connect', () => {
+        const user = store.getState().auth.user;
+        console.log('[App] Socket connected, user:', user?._id);
+        if (user?._id) {
+            socket.emit('user-online', { userId: user._id, name: user.name });
+            // Also re-register FCM on reconnect
+            _refreshAndRegisterFcmToken();
+        }
+    });
+
+    socket.on('incoming-call', ({ callerName, callerId, roomId }) => {
+    console.log('[App] Incoming call from:', callerName);
+    
+    // ✅ Cancel any old notifications first
+    try {
+        const notifee = require('@notifee/react-native').default;
+        notifee.cancelAllNotifications();
+    } catch(e) {}
+    
+    InCallManager.startRingtone('_BUNDLE_');
+    setIncomingCall({ callerName, callerId, roomId });
+});
+
+    socket.on('call-cancelled', () => {
+        InCallManager.stopRingtone();
+        setIncomingCall(null);
+    });
+
+    return () => {
+        socket.off('connect');
+        socket.off('incoming-call');
+        socket.off('call-cancelled');
+    };
+}, []);
 
   const _requestMediaPermissions = async () => {
     try {
@@ -85,7 +168,7 @@ const App = () => {
         importance: AndroidImportance.HIGH,
         sound: 'ringtone',
         vibration: true,
-        vibrationPattern: [0, 500, 500, 500],
+        vibrationPattern: [500, 500, 500, 500],
       });
       console.log('[App] Call notification channel created');
     } catch (err) {
@@ -129,7 +212,8 @@ await _refreshAndRegisterFcmToken();
 // Refresh token if it changes
 onTokenRefresh(messagingInstance, async (token) => {
   console.log('[App] FCM token refreshed');
-  const userId = await AsyncStorage.getItem('userId');
+  // const userId = await AsyncStorage.getItem('userId');
+  const userId = user?._id
   if (userId) await _sendFcmTokenToServer(userId, token);
 });
 
@@ -147,16 +231,63 @@ getInitialNotification(messagingInstance).then((remoteMessage) => {
   }
 });
 
-    // ── App KILLED — user tapped NOTIFEE notification ─────────────────────
-    try {
-      const notifee = require('@notifee/react-native').default;
-      notifee.getInitialNotification().then((initial) => {
-        if (initial?.notification?.data) {
-          console.log('[App] Notifee initial notification:', initial.notification.data);
-          setTimeout(() => _handleCallNotification(initial.notification.data), 1500);
-        }
-      });
-    } catch (e) { }
+const notifee = require('@notifee/react-native').default;
+const { EventType } = require('@notifee/react-native');
+    notifee.getInitialNotification().then((initial) => {
+    if (!initial) return;
+    const data = initial?.notification?.data;
+    console.log('[App] Notifee initial:', data);
+    
+    if (data?.type === 'incoming_call') {
+        const tryNavigate = (attempts = 0) => {
+            const user = store.getState().auth.user;
+            if (user?._id) {
+                setIncomingCall({
+                    callerName: data.callerName,
+                    callerId: data.callerId,
+                    roomId: data.roomId,
+                });
+            } else if (attempts < 15) {
+                setTimeout(() => tryNavigate(attempts + 1), 300);
+            }
+        };
+        setTimeout(() => tryNavigate(), 1000);
+    }
+});
+
+// App background — tapped notification
+notifee.onForegroundEvent(({ type, detail }) => {
+    const data = detail?.notification?.data;
+    if (!data || data.type !== 'incoming_call') return;
+
+    if (type === EventType.PRESS) {
+        setIncomingCall({
+            callerName: data.callerName,
+            callerId: data.callerId,
+            roomId: data.roomId,
+        });
+        notifee.cancelNotification(detail.notification.id);
+    }
+
+    if (type === EventType.ACTION_PRESS && detail.pressAction?.id === 'answer') {
+        InCallManager.stopRingtone();
+        setIncomingCall(null);
+        const user = store.getState().auth.user;
+        navigate('VideoCall', {
+            roomId: data.roomId,
+            calleeId: data.callerId,
+            calleeName: data.callerName,
+            callerName: user?.name,
+            isInitiator: false,
+        });
+        notifee.cancelNotification(detail.notification.id);
+    }
+
+    if (type === EventType.ACTION_PRESS && detail.pressAction?.id === 'decline') {
+        socket.emit('call-declined', { roomId: data.roomId });
+        notifee.cancelNotification(detail.notification.id);
+    }
+});
 
     // ── Opened from CallActivity Answer button ────────────────────────────
     // Check immediately AND keep retrying — don't clear store until navigated
@@ -198,16 +329,24 @@ getInitialNotification(messagingInstance).then((remoteMessage) => {
 
     console.log('[App] Navigating to call — room:', roomId);
 
-    const tryNavigate = () => {
-      // if (navigationRef.current?.isReady()) {
-        navigate('VideoCall', {
-          roomId,
-          calleeName: callerName || 'Unknown',
-          isInitiator: false,
-        });
-      // } else {
-      //   setTimeout(tryNavigate, 300);
-      // }
+   const tryNavigate = (attempts = 0) => {
+        const freshUser = store.getState().auth.user; // ← fresh every time
+        if (freshUser?._id) {
+            setIncomingCall({
+                callerName: data.callerName,
+                callerId: data.callerId,
+                roomId: data.roomId,
+            });
+        } else if (attempts < 15) {
+            setTimeout(() => tryNavigate(attempts + 1), 300);
+        } else {
+            // Give up — show anyway
+            setIncomingCall({
+                callerName: data.callerName,
+                callerId: data.callerId,
+                roomId: data.roomId,
+            });
+        }
     };
     tryNavigate();
   };
@@ -215,15 +354,22 @@ getInitialNotification(messagingInstance).then((remoteMessage) => {
   // ── Register FCM token with signaling server ───────────────────────────────
   // Called on every app open — ensures server always has latest token
   const _refreshAndRegisterFcmToken = async () => {
-    try {
-    const messagingInstance = getMessaging();
-    const token = await getToken(messagingInstance);
-    console.log('[App] FCM token:', token);
-    const userId = await AsyncStorage.getItem('userId');
-    if (userId && token) await _sendFcmTokenToServer(userId, token);
-  } catch (err) {
-    console.log('[App] FCM token error:', err.message);
-  }
+     try {
+        const messagingInstance = getMessaging();
+        const token = await getToken(messagingInstance);
+        
+        // ✅ Always get fresh from store, not captured closure
+        const user = store.getState().auth.user;
+        console.log('[App] FCM register — userId:', user?._id, 'token:', token?.substring(0, 20));
+        
+        if (user?._id && token) {
+            await _sendFcmTokenToServer(user._id, token);
+        } else {
+            console.log('[App] ⚠️ Cannot register FCM — userId:', user?._id, 'hasToken:', !!token);
+        }
+    } catch (err) {
+        console.log('[App] FCM token error:', err.message);
+    }
   };
 
   const _sendFcmTokenToServer = async (userId, fcmToken) => {
@@ -241,46 +387,46 @@ getInitialNotification(messagingInstance).then((remoteMessage) => {
     }
   };
 
-  useEffect(() => {
-    // Wait for redux to load user, then register presence
-    const unsubscribe = store.subscribe(() => {
-        const user = store.getState().auth.user;
-        if (user?._id && socket.connected) {
-            socket.emit('user-online', { userId: user._id, name: user.name });
-        }
-    });
+//   useEffect(() => {
+//     // Wait for redux to load user, then register presence
+//     const unsubscribe = store.subscribe(() => {
+//         const user = store.getState().auth.user;
+//         if (user?._id && socket.connected) {
+//             socket.emit('user-online', { userId: user._id, name: user.name });
+//         }
+//     });
 
-    socket.on('connect', () => {
-        console.log('[App] Socket connected');
-        const user = store.getState().auth.user;
-        if (user?._id) {
-            socket.emit('user-online', { userId: user._id, name: user.name });
-        }
-    });
+//     socket.on('connect', () => {
+//         console.log('[App] Socket connected');
+//         const user = store.getState().auth.user;
+//         if (user?._id) {
+//             socket.emit('user-online', { userId: user._id, name: user.name });
+//         }
+//     });
 
-    // ✅ Global incoming call listener — works on ALL screens
-    socket.on('incoming-call', ({ callerName, callerId, roomId }) => {
-        console.log('[App] Incoming call from:', callerName);
-        const user = store.getState().auth.user;
-        navigate('VideoCall', {
-            roomId,
-            calleeId: callerId,
-            calleeName: callerName,
-            callerName: user?.name,
-            isInitiator: false,
-        });
-    });
+//     // ✅ Global incoming call listener — works on ALL screens
+//     socket.on('incoming-call', ({ callerName, callerId, roomId }) => {
+//         console.log('[App] Incoming call from:', callerName);
+//         const user = store.getState().auth.user;
+//         navigate('VideoCall', {
+//             roomId,
+//             calleeId: callerId,
+//             calleeName: callerName,
+//             callerName: user?.name,
+//             isInitiator: false,
+//         });
+//     });
 
-    socket.on('call-cancelled', () => {
-        console.log('[App] Call cancelled');
-    });
+//     socket.on('call-cancelled', () => {
+//         console.log('[App] Call cancelled');
+//     });
 
-    return () => {
-        unsubscribe();
-        socket.off('incoming-call');
-        socket.off('call-cancelled');
-    };
-}, []);
+//     return () => {
+//         unsubscribe();
+//         socket.off('incoming-call');
+//         socket.off('call-cancelled');
+//     };
+// }, []);
   return (
     <Provider store={store}>
       <SafeAreaView
@@ -294,6 +440,29 @@ getInitialNotification(messagingInstance).then((remoteMessage) => {
         <Spinner />
         <Navigation />
         <Toast />
+        {incomingCall && (
+                <IncomingCallScreen
+                    callerName={incomingCall.callerName}
+                    roomId={incomingCall.roomId}
+                    onAnswer={() => {
+                        InCallManager.stopRingtone();
+                        const user = store.getState().auth.user;
+                        setIncomingCall(null);
+                        navigate('VideoCall', {
+                            roomId: incomingCall.roomId,
+                            calleeId: incomingCall.callerId,
+                            calleeName: incomingCall.callerName,
+                            callerName: user?.name,
+                            isInitiator: false,
+                        });
+                    }}
+                    onDecline={() => {
+                        InCallManager.stopRingtone();
+                        socket.emit('call-declined', { roomId: incomingCall.roomId });
+                        setIncomingCall(null);
+                    }}
+                />
+            )}
       </SafeAreaView>
      </Provider>
   );

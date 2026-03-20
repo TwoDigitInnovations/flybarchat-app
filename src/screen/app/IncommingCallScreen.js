@@ -139,6 +139,11 @@ const IncomingCallScreen = ({
         .slice(0, 2);
 
     return (
+        <View style={{ 
+    position: 'absolute',
+    top: 0, left: 0, right: 0, bottom: 0,
+    zIndex: 9999,
+}}>
         <View style={S.root}>
             <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
 
@@ -225,6 +230,7 @@ const IncomingCallScreen = ({
 
                 </SafeAreaView>
             </Animated.View>
+        </View>
         </View>
     );
 };

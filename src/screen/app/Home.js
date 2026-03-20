@@ -252,11 +252,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   welcomeCard: {
-    backgroundColor: '#5a5a5a',
+    backgroundColor: '#D9D9D947',
     marginHorizontal: 20,
     padding: 20,
     borderRadius: 16,
     marginBottom: 20,
+    justifyContent:'center',
+    alignItems:'center'
   },
   welcomeTitle: {
     color: Constants.white,
@@ -265,13 +267,14 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   welcomeSubtitle: {
-    color: '#e0e0e0',
-    fontSize: 14,
-    fontFamily:FONTS.Regular,
+    color: Constants.customgrey5,
+    fontSize: 12,
+    fontFamily:FONTS.Medium,
     lineHeight: 20,
+    textAlign:'center'
   },
   startChatButton: {
-    backgroundColor: '#4a4a4a',
+    backgroundColor: '#D9D9D947',
     marginHorizontal: 20,
     paddingVertical: 18,
     borderRadius: 12,
@@ -301,15 +304,15 @@ const styles = StyleSheet.create({
   viewAllButton: {
     color: Constants.white,
     fontSize: 14,
-    fontFamily:FONTS.Medium,
+    fontFamily:FONTS.SemiBold,
     backgroundColor: Constants.white,
-    color: '#1a1a1a',
+    color: Constants.light_black,
     paddingHorizontal: 16,
     paddingVertical: 6,
     borderRadius: 20,
   },
   onlineUsersContainer: {
-    backgroundColor: '#3a3a3a',
+    backgroundColor: '#D9D9D947',
     paddingVertical: 15,
     borderRadius: 20,
     marginHorizontal: 20,

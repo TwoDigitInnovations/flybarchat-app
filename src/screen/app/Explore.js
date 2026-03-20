@@ -10,7 +10,7 @@ import {
 } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Back2Icon, ChatIcon, LocationIcon, NotificationIcon } from '../../Assets/theme'
-import Constants from '../../Assets/Helpers/constant'
+import Constants, { FONTS } from '../../Assets/Helpers/constant'
 import { useDispatch, useSelector } from 'react-redux'
 import { getOnlineUsers } from '../../../redux/auth/authAction'
 import { navigate } from '../../../utils/navigationRef'
@@ -194,9 +194,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerTitle: {
-    color: '#ffffff',
-    fontSize: 20,
-    fontWeight: '700',
+    color: Constants.white,
+    fontSize: 18,
+    fontFamily:FONTS.SemiBold,
   },
   notificationButton: {
     width: 44,
@@ -211,9 +211,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sectionTitle: {
-    color: '#ffffff',
-    fontSize: 20,
-    fontWeight: '700',
+    color: Constants.white,
+    fontSize: 16,
+    fontFamily:FONTS.SemiBold,
     paddingHorizontal: 20,
     marginBottom: 20,
   },
@@ -271,14 +271,14 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   onlineText: {
-    color: '#ffffff',
+    color: Constants.white,
     fontSize: 12,
-    fontWeight: '500',
+    fontFamily:FONTS.Medium,
   },
   userCardName: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '700',
+    color: Constants.white,
+    fontSize: 14,
+    fontFamily:FONTS.SemiBold,
     marginBottom: 4,
   },
   locationRow: {
@@ -286,10 +286,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   locationText: {
-    color: '#ffffff',
+    color: Constants.white,
     fontSize: 12,
     marginLeft: 4,
-    fontWeight: '400',
+    fontFamily:FONTS.Regular,
   },
   chatIconButton: {
     width: 36,
