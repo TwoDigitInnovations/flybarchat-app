@@ -19,15 +19,17 @@ import { Formik, useFormik } from 'formik';
 import { useDispatch } from 'react-redux';
 import { login } from '../../../redux/auth/authAction';
 import { BackIcon } from '../../Assets/theme';
+import { useTranslation } from 'react-i18next';
 
 const SignIn = () => {
   const [showPass, setShowPass] = useState(true);
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const validationSchema = Yup.object().shape({
-    email: Yup.string().email('Invalid email').required('Email is required'),
+    email: Yup.string().email(t('Invalid email')).required(t('Email is required')),
     password: Yup.string()
-      .min(8, 'Password must be at least 8 characters')
-      .required('Password is required'),
+      .min(8, t('Password must be at least 8 characters'))
+      .required(t('Password is required')),
   });
 
   const formik = useFormik({
@@ -99,10 +101,10 @@ const SignIn = () => {
 
       <View style={styles.formContainer}>
         {/* Email Input */}
-          <Text style={styles.label}>Email</Text>
+          <Text style={styles.label}>{t("Email")}</Text>
           <TextInput
             style={styles.input}
-            placeholder="Enter Email"
+            placeholder={t("Enter Email")}
             textAlign="left"
             placeholderTextColor={Constants.customgrey2}
             value={formik.values.email}
@@ -113,11 +115,11 @@ const SignIn = () => {
           <Text style={styles.require}>{formik.errors.email}</Text>
         )}
 
-          <Text style={styles.label}>Password</Text>
+          <Text style={styles.label}>{t("Password")}</Text>
           <View style={styles.passwordContainer}>
             <TextInput
               style={styles.passwordInput}
-              placeholder="Enter Password"
+              placeholder={t("Enter Password")}
               secureTextEntry={showPass}
               placeholderTextColor={Constants.customgrey2}
               value={formik.values.password}
@@ -146,28 +148,28 @@ const SignIn = () => {
             <Text style={styles.require}>{formik.errors.password}</Text>
           )}
           <TouchableOpacity style={styles.forgotPasswordContainer} onPress={()=>navigate('ForgotPassword')}>
-            <Text style={styles.forgotPasswordText}>Forgot password?</Text>
+            <Text style={styles.forgotPasswordText}>{t("Forgot password?")}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.registerButton}
             onPress={formik.handleSubmit}
           >
-            <Text style={styles.registerButtonText}>Login</Text>
+            <Text style={styles.registerButtonText}>{t("Login")}</Text>
           </TouchableOpacity>
 
       </View>
       </ScrollView>
           {!keyboardVisible && (
             <Text style={styles.textcov} onPress={() => navigate('SignUp')}>
-              <Text style={styles.lasttxt}>Don’t have an account ? </Text>
+              <Text style={styles.lasttxt}>{t("Don’t have an account ?")} </Text>
               <Text
                 style={[
                   styles.lasttxt,
                   { color: Constants.custom_red, textDecorationLine: 'underline' },
                 ]}
               >
-                Sign Up
+                {t("Sign Up")}
               </Text>
             </Text>
           )}

@@ -15,12 +15,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getOnlineUsers } from '../../../redux/auth/authAction'
 import { navigate } from '../../../utils/navigationRef'
 import { checkConnection } from '../../../redux/connection/connectionAction'
+import { useTranslation } from 'react-i18next'
 
 const { width } = Dimensions.get('window')
 const cardWidth = (width - 40) / 2
 
 const Explore = ({ navigation }) => {
 
+  const { t } = useTranslation();
   const [page, setPage] = useState(1);
   const [curentData, setCurrentData] = useState([]);
   const user = useSelector(state => state.auth.user);
@@ -82,7 +84,8 @@ const Explore = ({ navigation }) => {
         key={userData?._id}
         style={[
           styles.userCard,
-          isFullWidth && styles.userCardFull
+          isFullWidth && styles.userCardFull,
+          {marginBottom:isLastItem?110:20}
         ]}
         activeOpacity={0.9}
         onPress={()=>getConnection(userData)}
@@ -98,7 +101,7 @@ const Explore = ({ navigation }) => {
           <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
           <View style={styles.onlineStatus}>
             <View style={styles.onlineDot} />
-            <Text style={styles.onlineText}>Online</Text>
+            <Text style={styles.onlineText}>{t("Online")}</Text>
           </View>
 
           <View style={styles.chatIconButton}>
@@ -144,7 +147,7 @@ const Explore = ({ navigation }) => {
           <Back2Icon height={24} width={24} />
         </TouchableOpacity>
         
-        <Text style={styles.headerTitle}>Explore</Text>
+        <Text style={styles.headerTitle}>{t("Explore")}</Text>
         
         <TouchableOpacity style={styles.notificationButton}>
           <NotificationIcon height={24} width={24} />
@@ -152,7 +155,7 @@ const Explore = ({ navigation }) => {
       </View>
 
         {/* Section Title */}
-        <Text style={styles.sectionTitle}>Who's Online at Bar</Text>
+        <Text style={styles.sectionTitle}>{t("Who's Online at Bar")}</Text>
 
         <FlatList
         data={onlineUserList}

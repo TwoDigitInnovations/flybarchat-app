@@ -8,12 +8,14 @@ import { signup } from '../../../redux/auth/authAction';
 import { useDispatch } from 'react-redux';
 import { goBack, navigate } from '../../../utils/navigationRef';
 import { BackIcon, CheckboxIcon } from '../../Assets/theme';
+import { useTranslation } from 'react-i18next';
 
 const SignUp = () => {
   const [showPass, setShowPass] = useState(true);
   const dispatch = useDispatch();
+  const { t } = useTranslation();
     const validationSchema = Yup.object().shape({
-      name: Yup.string().required('Name is required'),
+      name: Yup.string().required(t('Name is required')),
       email: Yup.string().email('Invalid email').required('Email is required'),
       password: Yup.string().min(8, 'Password must be at least 8 characters').required('Password is required'),
       // conformpassword: Yup.string()

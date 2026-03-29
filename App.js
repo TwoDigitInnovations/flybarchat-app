@@ -7,7 +7,6 @@ import { LogLevel, OneSignal } from 'react-native-onesignal';
 import Toast from 'react-native-toast-message';
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
-// import { checkLogin } from './redux/auth/authAction';
 import Spinner from './src/Assets/Component/Spinner';
 // import NetError from './src/Assets/Component/NetError';
 // import Splash from 'react-native-splash-screen';
@@ -26,21 +25,27 @@ import {
 import { socket } from './utils';
 import IncomingCallScreen from './src/screen/app/IncommingCallScreen';
 import InCallManager from 'react-native-incall-manager';
-// import i18n from './i18n';
-// import { setLanguage } from './redux/location/locationSlice';
+import i18n from './i18n';
+import { setLanguage } from './redux/language/languageSlice';
 
 const SIGNALING_SERVER_URL = SOCKET_URL;
 const App = () => {
   // const APP_ID = 'df0d1c60-c14f-4226-8ba1-927c55e75f3a';
-
+  
   // useEffect(() => {
-  //   OneSignal.initialize(APP_ID);
-  //   OneSignal.Notifications.requestPermission(true);
-  // }, [OneSignal]);
-  const [incomingCall, setIncomingCall] = useState(null);
-const user = store.getState().auth.user;
+    //   OneSignal.initialize(APP_ID);
+    //   OneSignal.Notifications.requestPermission(true);
+    // }, [OneSignal]);
+    const [incomingCall, setIncomingCall] = useState(null);
+    const user = store.getState().auth.user;
+    const cancelCallNotification = async () => {
+      try {
+        const notifee = require('@notifee/react-native').default;
+        await notifee.cancelAllNotifications();
+      } catch(e) {}
+    };
   useEffect(()=>{
-    // checkLng()
+    checkLng()
     store.dispatch(checkLogin()).unwrap()
       .then(async() => {
             // ✅ User is now in Redux
@@ -100,12 +105,16 @@ const user = store.getState().auth.user;
   },[])
 
   const checkLng = async () => {
-      const x = await AsyncStorage.getItem('LANG');
-      if (x != null) {
-        i18n.changeLanguage(x);
-        let lng = x == x == 'sv' ? 'Swedish':'English';
-        store.dispatch(setLanguage(lng))
+      try {
+      const code = await AsyncStorage.getItem('LANG');
+
+      if (code) {
+        i18n.changeLanguage(code);
+        store.dispatch(setLanguage(code));
       }
+    } catch (e) {
+      console.log('Lang load error', e);
+    }
     };
 
 
@@ -133,9 +142,12 @@ const user = store.getState().auth.user;
     setIncomingCall({ callerName, callerId, roomId });
 });
 
+
+
     socket.on('call-cancelled', () => {
         InCallManager.stopRingtone();
         setIncomingCall(null);
+        cancelCallNotification()
     });
 
     return () => {
@@ -187,13 +199,14 @@ const user = store.getState().auth.user;
 
     // Suppress OneSignal banner when app is open — socket handles it
     OneSignal.Notifications.addEventListener('foregroundWillDisplay', (event) => {
-      const data = event.notification.additionalData;
-      if (data?.type === 'incoming_call') {
-        event.preventDefault();
-      } else {
-        event.notification.display();
-      }
-    });
+  const data = event.notification.additionalData;
+  // Suppress ALL incoming_call OneSignal notifications always
+  if (data?.type === 'incoming_call') {
+    event.preventDefault(); // Don't show OneSignal's notification
+    return;
+  }
+  event.notification.display();
+});
 
     // ── 2. Firebase FCM (Android killed-app wakeup) ─────────────────────────
     if (Platform.OS !== 'android') return;
@@ -446,6 +459,7 @@ notifee.onForegroundEvent(({ type, detail }) => {
                     roomId={incomingCall.roomId}
                     onAnswer={() => {
                         InCallManager.stopRingtone();
+                        cancelCallNotification()
                         const user = store.getState().auth.user;
                         setIncomingCall(null);
                         navigate('VideoCall', {
@@ -458,6 +472,7 @@ notifee.onForegroundEvent(({ type, detail }) => {
                     }}
                     onDecline={() => {
                         InCallManager.stopRingtone();
+                        cancelCallNotification()
                         socket.emit('call-declined', { roomId: incomingCall.roomId });
                         setIncomingCall(null);
                     }}

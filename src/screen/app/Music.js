@@ -12,6 +12,7 @@ import Constants, { Currency, FONTS } from '../../Assets/Helpers/constant';
 import { useDispatch } from 'react-redux';
 import { getAllMusic } from '../../../redux/Music/musicAction';
 import { Back2Icon } from '../../Assets/theme';
+import { useTranslation } from 'react-i18next';
 
 const CATEGORIES = ['Romantic', 'Popular', 'Trending', 'Classic'];
 
@@ -56,6 +57,7 @@ const SongItem = ({ song }) => {
 };
 
 export default function SongsMenuScreen({ navigation }) {
+  const { t } = useTranslation();
   // const [activeCategory, setActiveCategory] = useState('Romantic');
   const [displayCount, setDisplayCount] = useState(7); // Controls initial 10 items display
   const [seeMoreClicked, setSeeMoreClicked] = useState(false);
@@ -108,8 +110,8 @@ const handleSeeMore = () => {
           <Back2Icon />
         </TouchableOpacity>
         <View style={styles.headerTitleWrap}>
-          <Text style={styles.headerTitle}>Songs</Text>
-          <Text style={styles.headerSubtitle}>Buy a song to dedicate the person</Text>
+          <Text style={styles.headerTitle}>{t("Songs")}</Text>
+          <Text style={styles.headerSubtitle}>{t("Buy a song to dedicate the person")}</Text>
         </View>
         <View style={styles.headerSpacer} />
       </View>
@@ -159,10 +161,10 @@ const handleSeeMore = () => {
       ListFooterComponent={()=><View>
        {showSeeMore&& <View>
         <TouchableOpacity style={styles.seeMoreButton} onPress={handleSeeMore}>
-            <Text style={styles.seeMoreText}>See More  ⌄</Text>
+            <Text style={styles.seeMoreText}>{t("See More")}  ⌄</Text>
           </TouchableOpacity>
 
-          <Text style={styles.footerNote}>A Romantic Song will be sent to your date</Text>
+          <Text style={styles.footerNote}>{t("A Romantic Song will be sent to your date")}</Text>
           </View>}
       </View>}
       style={{marginTop:20}}
@@ -175,7 +177,7 @@ const handleSeeMore = () => {
       onEndReachedThreshold={0.05} />
 
         <TouchableOpacity style={styles.ctaButton} activeOpacity={0.8}>
-          <Text style={styles.ctaText}>May be later</Text>
+          <Text style={styles.ctaText}>{t("May be later")}</Text>
         </TouchableOpacity>
 
     </ImageBackground>

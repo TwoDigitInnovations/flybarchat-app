@@ -18,16 +18,32 @@ const LanguageChange = props => {
     checkLng();
   }, []);
   const checkLng = async () => {
-    const x = await AsyncStorage.getItem('LANG');
-    if (x != null) {
-      let lng = x == 'sv' ? 'Swedish':'English';
-      setSelectLanguage(lng);
-      dispatch(setLanguage(lng))
+  const code = await AsyncStorage.getItem('LANG');
+
+  if (code) {
+    const selected = countrydata.find(i => i.code === code);
+    if (selected) {
+      setSelectLanguage(selected.name);
+      setSelectCode(selected.code);
+      dispatch(setLanguage(selected.code));
     }
-  };
+  }
+};
   const countrydata = [
-    {name: 'English', code: 'en', flag: '🇺🇸'},
-    {name: 'Swedish', code: 'sv', flag: '🇸🇪'},
+  {name: 'English', code: 'en', flag: '🇺🇸'},
+  {name: 'French', code: 'fr', flag: '🇫🇷'},
+  {name: 'German', code: 'de', flag: '🇩🇪'},
+  {name: 'Spanish', code: 'es', flag: '🇪🇸'},
+  {name: 'Portuguese', code: 'pt', flag: '🇵🇹'},
+  {name: 'Arabic', code: 'ar', flag: '🇸🇦'},
+  {name: 'Hindi', code: 'hi', flag: '🇮🇳'},
+  {name: 'Sinhala', code: 'si', flag: '🇱🇰'},
+  {name: 'Tamil', code: 'ta', flag: '🇮🇳'},
+  {name: 'Romanian', code: 'ro', flag: '🇷🇴'},
+  {name: 'Russian', code: 'ru', flag: '🇷🇺'},
+  {name: 'Ukrainian', code: 'uk', flag: '🇺🇦'},
+  {name: 'Polish', code: 'pl', flag: '🇵🇱'},
+  {name: 'Bulgarian', code: 'bg', flag: '🇧🇬'},
   ];
   return (
     <ActionSheet
@@ -49,7 +65,7 @@ const LanguageChange = props => {
         ]}>
         <View style={styles.headcov}>
           <Text style={[styles.heading, {color: Constants.black}]}>
-            Select Language
+            {t("Select Language")}
           </Text>
           <CrossIcon
             height={25}
@@ -98,7 +114,7 @@ const LanguageChange = props => {
                 i18n.changeLanguage(selectCode);
                 props.selLang(selectLanguage);
                 props?.refs.current.hide();
-                setLanguage(selectCode) 
+                dispatch(setLanguage(selectCode))
               }}>
               <Text style={styles.btntxt}>Select</Text>
             </TouchableOpacity>

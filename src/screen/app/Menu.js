@@ -12,8 +12,10 @@ import { ArrowLeftIcon, ArrowRightIcon, Back2Icon } from '../../Assets/theme';
 import { useDispatch } from 'react-redux';
 import { getAllMenu } from '../../../redux/Menu/menuAction'
 import Constants, { Currency, FONTS } from '../../Assets/Helpers/constant';
+import { useTranslation } from 'react-i18next';
 
 const MenuItem = ({ item,index }) => {
+  const { t } = useTranslation();
   const [pressed, setPressed] = useState(false);
   const isRight = (index+1)%2===0;
 
@@ -39,7 +41,7 @@ const MenuItem = ({ item,index }) => {
       {/* Center content */}
       <View style={[styles.itemContent, isRight && styles.itemContentRight]}>
         <Text style={styles.itemName}>{item?.name}</Text>
-        <Text style={styles.itemSubtitle}>{item.time} min video call</Text>
+        <Text style={styles.itemSubtitle}>{item.time} {t("min video call")}</Text>
         {isRight?<ArrowRightIcon />:<ArrowLeftIcon />}
       </View>
 
@@ -59,6 +61,7 @@ const MenuItem = ({ item,index }) => {
 };
 
 export default function DrinkMenuScreen({ navigation }) {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const [menuList,setMenuList]=useState([])
   useEffect(()=>{
@@ -83,8 +86,8 @@ export default function DrinkMenuScreen({ navigation }) {
           <Back2Icon />
         </TouchableOpacity>
         <View style={styles.headerTitleWrap}>
-          <Text style={styles.headerTitle}>Drink Menu</Text>
-          <Text style={styles.headerSubtitle}>Send a drink to Unlock video call</Text>
+          <Text style={styles.headerTitle}>{t("Drink Menu")}</Text>
+          <Text style={styles.headerSubtitle}>{t("Send a drink to Unlock video call")}</Text>
         </View>
         <View style={styles.headerSpacer} />
       </View>
@@ -115,7 +118,7 @@ export default function DrinkMenuScreen({ navigation }) {
                 fontSize: 18,
                 fontFamily: FONTS.Medium,
               }}>
-              No Conversation Available
+              {t("No Menu Available")}
             </Text>
           </View>
         )}
@@ -125,7 +128,7 @@ export default function DrinkMenuScreen({ navigation }) {
       {/* Bottom CTA */}
       <View style={styles.bottomContainer}>
         <TouchableOpacity style={styles.ctaButton} activeOpacity={0.8}>
-          <Text style={styles.ctaText}>May be later</Text>
+          <Text style={styles.ctaText}>{t("May be later")}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -162,7 +165,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
   headerSubtitle: {
-    color: Constants.customgrey,
+    color: Constants.customgrey3,
     fontFamily:FONTS.Regular,
     fontSize: 12,
     marginTop: 2,

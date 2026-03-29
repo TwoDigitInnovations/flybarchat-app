@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import React, { createRef, useEffect, useState} from 'react';
-import Constants, { FONTS} from '../../Assets/Helpers/constant';
+import Constants, { FONTS, LANGUAGES} from '../../Assets/Helpers/constant';
 // import InAppBrowser from 'react-native-inappbrowser-reborn';
 import { useDispatch, useSelector } from 'react-redux';
 import { navigate } from '../../../utils/navigationRef';
@@ -22,13 +22,17 @@ import { CrossIcon,
   RightArrowIcon,
   SupportIcon,
   TermIcon, } from '../../Assets/theme';
+import { useTranslation } from 'react-i18next';
 
 const Account = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
   const user = useSelector(state => state.auth.user);
   
+  const selectedCode = useSelector(state => state.language.langCode);
+  const selectedLang = LANGUAGES.find(l => l.code === selectedCode);
   
   const InAppBrowserFunc=async(props)=>{
     return
@@ -57,7 +61,7 @@ dispatch(logout())
   }
   return (
     <View style={styles.container}>
-      <Text style={styles.headtxt}>Profile Settings</Text>
+      <Text style={styles.headtxt}>{t("Profile Settings")}</Text>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <TouchableOpacity
@@ -86,7 +90,7 @@ dispatch(logout())
             backgroundColor: Constants.light_black,
             marginBottom: 70,
           }}>
-          <Text style={styles.partheadtxt}>Profile</Text>
+          <Text style={styles.partheadtxt}>{t("Profile")}</Text>
           <TouchableOpacity
             style={[styles.box]}
             onPress={() => navigate('Profile')}>
@@ -94,7 +98,7 @@ dispatch(logout())
               <View style={styles.iconcov}>
                 <ProfileIcon height={20} width={20} color={Constants.white}/>
               </View>
-              <Text style={styles.protxt}>Personal Data</Text>
+              <Text style={styles.protxt}>{t("Personal Data")}</Text>
             </View>
             <RightArrowIcon
               color={Constants.white}
@@ -112,7 +116,7 @@ dispatch(logout())
               <View style={styles.iconcov}>
                 <PrivacyIcon height={20} width={20} color={Constants.white}/>
               </View>
-              <Text style={styles.protxt}>Privacy Policy</Text>
+              <Text style={styles.protxt}>{t("Privacy Policy")}</Text>
             </View>
             <RightArrowIcon
               color={Constants.white}
@@ -129,7 +133,7 @@ dispatch(logout())
               <View style={styles.iconcov}>
                 <TermIcon height={20} width={20} color={Constants.white}/>
               </View>
-              <Text style={styles.protxt}>Terms and Conditions</Text>
+              <Text style={styles.protxt}>{t("Terms and Conditions")}</Text>
             </View>
             <RightArrowIcon
               color={Constants.white}
@@ -138,7 +142,27 @@ dispatch(logout())
               style={styles.aliself}
             />
           </TouchableOpacity>
-          <Text style={styles.partheadtxt}>Support</Text>
+          <TouchableOpacity
+            style={[styles.box]}
+            onPress={() =>navigate('Auth',{screen:'LanguageChange'})}
+            >
+            <View style={styles.btmboxfirpart}>
+              <View style={styles.iconcov}>
+                <TermIcon height={20} width={20} color={Constants.white}/>
+              </View>
+              <Text style={styles.protxt}>{t("Language")}</Text>
+            </View>
+            <View style={styles.btmboxfirpart}>
+              <Text style={styles.protxt3}>{selectedLang?.native}</Text>
+            <RightArrowIcon
+              color={Constants.white}
+              height={15}
+              width={15}
+              style={styles.aliself}
+            />
+            </View>
+          </TouchableOpacity>
+          <Text style={styles.partheadtxt}>{t("Support")}</Text>
           <TouchableOpacity
             style={[styles.box]}
             onPress={() => InAppBrowserFunc('https://tawk.to/chat/68e0fa0c4db84c19518e60e8/1j6nd1gbd')}
@@ -147,7 +171,7 @@ dispatch(logout())
               <View style={styles.iconcov}>
                 <SupportIcon height={20} width={20} color={Constants.white}/>
               </View>
-              <Text style={styles.protxt}>Help Center</Text>
+              <Text style={styles.protxt}>{t("Help Center")}</Text>
             </View>
             <RightArrowIcon
               color={Constants.white}
@@ -163,7 +187,7 @@ dispatch(logout())
               <View style={styles.iconcov}>
                 <DeleteIcon height={20} width={20} color={Constants.white} />
               </View>
-              <Text style={[styles.protxt,{width:'70%'}]}>Request Account Deletion</Text>
+              <Text style={[styles.protxt,{width:'70%'}]}>{t("Request Account Deletion")}</Text>
             </View>
             <RightArrowIcon
               color={Constants.white}
@@ -178,7 +202,7 @@ dispatch(logout())
               setModalVisible(true);
             }}>
             <LogoutIcon color={Constants.red}/>
-            <Text style={styles.btntxt}>Log Out</Text>
+            <Text style={styles.btntxt}>{t("Log Out")}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -196,18 +220,18 @@ dispatch(logout())
             <View style={{backgroundColor: Constants.light_black, alignItems: 'center'}}>
               <View style={[styles.covline,{width:'100%'}]}>
                 <View style={{width:35}}></View>
-                <Text style={styles.textStyle5}>Sign Out </Text>
+                <Text style={styles.textStyle5}>{t("Sign Out")}</Text>
                 <TouchableOpacity style={styles.croscov} onPress={()=>setModalVisible(false)}>
                   <CrossIcon color={Constants.white}/>
                 </TouchableOpacity>
               </View>
-              <Text style={styles.textStyle4}>Are you sure you want to log out?</Text>
+              <Text style={styles.textStyle4}>{t("Are you sure you want to log out?")}</Text>
               <View style={styles.cancelAndLogoutButtonWrapStyle}>
                 <TouchableOpacity
                   activeOpacity={0.9}
                   onPress={() => setModalVisible(!modalVisible)}
                   style={styles.cancelButtonStyle2}>
-                  <Text style={styles.modalText}>Cancel</Text>
+                  <Text style={styles.modalText}>{t("Cancel")}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   activeOpacity={0.9}
@@ -216,7 +240,7 @@ dispatch(logout())
                     logOut();
                   }}
                   style={styles.logOutButtonStyle2}>
-                  <Text style={styles.modalText}>Log Out</Text>
+                  <Text style={styles.modalText}>{t("Log Out")}</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -235,26 +259,26 @@ dispatch(logout())
           <View style={styles.modalView}>
             <View style={{backgroundColor: Constants.light_black, alignItems: 'center'}}>
               <Text style={[styles.textStyle2, {color: Constants.red}]}>
-                WARNING: You are about to delete your account. This action is permanent and cannot be undone.
+                {t("WARNING: You are about to delete your account. This action is permanent and cannot be undone.")}
               </Text>
               <Text style={styles.textStyle3}>
-                • All your data, including personal information, and settings, will be permanently erased.
+                {t("• All your data, including personal information, and settings, will be permanently erased.")}
               </Text>
               <Text style={styles.textStyle3}>
-                • You will lose access to all services and benefits associated with your account.
+                {t("• You will lose access to all services and benefits associated with your account.")}
               </Text>
               <Text style={styles.textStyle3}>
-                • You will no longer receive updates, support, or communications from us.
+                {t("• You will no longer receive updates, support, or communications from us.")}
               </Text>
               <Text style={styles.textStyle}>
-                Are you sure you want to delete your account?
+                {t("Are you sure you want to delete your account?")}
               </Text>
               <View style={styles.cancelAndLogoutButtonWrapStyle}>
                 <TouchableOpacity
                   activeOpacity={0.9}
                   onPress={() => setModalVisible2(!modalVisible2)}
                   style={styles.cancelButtonStyle}>
-                  <Text style={[styles.modalText,{color:Constants.black}]}>Cancel</Text>
+                  <Text style={[styles.modalText,{color:Constants.black}]}>{t("Cancel")}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   activeOpacity={0.9}
@@ -263,7 +287,7 @@ dispatch(logout())
                     logOut();
                   }}
                   style={styles.logOutButtonStyle}>
-                  <Text style={styles.modalText}>Delete Account</Text>
+                  <Text style={styles.modalText}>{t("Delete Account")}</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -470,7 +494,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
   },
-  btmboxfirpart: {flexDirection: 'row', alignItems: 'center', gap: 15},
   croscov:{
     padding:10,
     borderRadius:8,
@@ -488,5 +511,10 @@ const styles = StyleSheet.create({
     color: Constants.white,
     fontSize: 12,
     fontFamily: FONTS.Medium,
+  },
+  btmboxfirpart: {
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    gap: 15
   },
 });

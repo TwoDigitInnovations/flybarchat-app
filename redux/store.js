@@ -7,6 +7,7 @@ import authSlice from './auth/authSlice';
 import connectionSlice from './connection/conectionSlice';
 import menuSlice from './Menu/menuSlice';
 import musicSlice from './Music/musicSlice';
+import languageSlice from './language/languageSlice';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     connection: connectionSlice,
     menu: menuSlice,
     music: musicSlice,
+    language: languageSlice,
   },
 });
 

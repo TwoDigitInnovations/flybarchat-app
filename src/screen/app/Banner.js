@@ -12,9 +12,10 @@ import {
 } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { getBannerOffer } from '../../../redux/Menu/menuAction';
-import { MocktailIcon } from '../../Assets/theme';
-import Constants, { FONTS } from '../../Assets/Helpers/constant';
-import { navigate } from '../../../utils/navigationRef';
+import { Back2Icon, MocktailIcon } from '../../Assets/theme';
+import Constants, { Currency, FONTS } from '../../Assets/Helpers/constant';
+import { goBack, navigate } from '../../../utils/navigationRef';
+import { useTranslation } from 'react-i18next';
 
 const { width } = Dimensions.get('window');
 
@@ -155,6 +156,7 @@ const OfferCard = ({ offer, index }) => {
 };
 
 export default function Banner() {
+  const { t } = useTranslation();
   const headerAnim = useRef(new Animated.Value(-30)).current;
   const headerFade = useRef(new Animated.Value(0)).current;
   const badgeScale = useRef(new Animated.Value(0)).current;
@@ -201,23 +203,30 @@ export default function Banner() {
             { opacity: headerFade, transform: [{ translateY: headerAnim }] },
           ]}
         >
+          <View style={styles.topcov}>
+            <TouchableOpacity
+                        style={styles.backButton}
+                        onPress={() => goBack()}>
+                        <Back2Icon height={24} width={24} />
+                      </TouchableOpacity>
             <View style={styles.toptxt}>
-          <Text style={styles.appName}>FLAY CHAT BAR </Text>
+          <Text style={styles.appName}>{t("FLAY CHAT BAR")}</Text>
                 <MocktailIcon height={28} width={28} />
             </View>
-          <Text style={styles.headerSub}>To access video calls, you must buy the menu!</Text>
+            </View>
+          <Text style={styles.headerSub}>{t("To access video calls, you must buy the menu!")}</Text>
 
           {/* Menu Badge */}
           <TouchableOpacity onPress={()=>navigate('Menu')}>
           <Animated.View style={[styles.menuBadge, { transform: [{ scale: badgeScale }] }]}>
-            <Text style={styles.menuBadgeText}>MENU  🎥  $2</Text>
+            <Text style={styles.menuBadgeText}>{t("MENU")}  🎥  {Currency}2</Text>
           </Animated.View>
           </TouchableOpacity>
 
           {/* Holiday Banner */}
           <View style={styles.holidayBanner}>
             <Animated.Text style={[styles.arrow, { transform: [{ translateX: arrowAnim }] }]}>→</Animated.Text>
-            <Text style={styles.holidayText}>Special Holiday Discounts!</Text>
+            <Text style={styles.holidayText}>{t("Special Holiday Discounts!")}</Text>
             <Animated.Text style={[styles.arrow, { transform: [{ translateX: Animated.multiply(arrowAnim, -1) }] }]}>←</Animated.Text>
           </View>
         </Animated.View>
@@ -242,7 +251,7 @@ export default function Banner() {
 
         {/* Maybe Later */}
         <TouchableOpacity style={styles.maybeLaterBtn} >
-          <Text style={styles.maybeLaterText}>Maybe later</Text>
+          <Text style={styles.maybeLaterText}>{t("Maybe later")}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -366,11 +375,23 @@ const styles = StyleSheet.create({
   },
   card: {
     borderRadius: 18,
-    // padding: 16,
     overflow: 'hidden',
-    // borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.07)',
-    // minHeight: 130,
     position: 'relative',
   },
+  backButton: {
+    width: 35,
+    height: 35,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  topcov:{
+    flexDirection:'row',
+    gap:'18%',
+    alignSelf:"flex-start",
+    alignItems:'center'
+  }
 });

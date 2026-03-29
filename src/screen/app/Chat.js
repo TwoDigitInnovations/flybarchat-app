@@ -16,10 +16,12 @@ import { getConnection } from '../../../redux/connection/connectionAction'
 import { useDispatch } from 'react-redux'
 import moment from 'moment'
 import { useIsFocused } from '@react-navigation/native'
+import { useTranslation } from 'react-i18next'
 
 const { width } = Dimensions.get('window')
 
 const Chat = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState('')
   const [chatList, setChatList] = useState([])
@@ -81,7 +83,7 @@ const getConnectionList = (keywor) => {
           <Back2Icon height={24} width={24} />
         </TouchableOpacity>
         
-        <Text style={styles.headerTitle}>Messages</Text>
+        <Text style={styles.headerTitle}>{t("Messages")}</Text>
         
         <View style={styles.placeholder} />
       </View>
@@ -104,7 +106,7 @@ const getConnectionList = (keywor) => {
 
       {/* Chats Section */}
       <View style={styles.chatsSection}>
-        <Text style={styles.sectionTitle}>Chats</Text>
+        <Text style={styles.sectionTitle}>{t("Chats")}</Text>
 
         <FlatList
           data={chatList}
@@ -125,7 +127,7 @@ const getConnectionList = (keywor) => {
                 fontSize: 16,
                 fontFamily: FONTS.Medium,
               }}>
-              No Chat Available
+              {t("No Chat Available")}
             </Text>
           </View>
         )}

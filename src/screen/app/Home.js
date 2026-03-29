@@ -17,8 +17,10 @@ import { navigate } from '../../../utils/navigationRef'
 import SwiperFlatList from 'react-native-swiper-flatlist'
 import Scheliton from '../../Assets/Component/Scheliton'
 import { hp } from '../../../utils/responsiveScreen'
+import { useTranslation } from 'react-i18next';
 
 const Home = ({ navigation }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const {width} = Dimensions.get('window');
   const [carosalimg, setcarosalimg] = useState([]);
@@ -87,13 +89,15 @@ dispatch(getOnlineUsers({page: 1, limit: 4})).unwrap()
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
+          <TouchableOpacity onPress={() => navigate('Profile')}>
           <Image
             source={user?.image?{uri: user?.image}:require('../../Assets/Images/profile2.png')}
             style={styles.profileImage}
           />
+          </TouchableOpacity>
           <View style={styles.userInfo}>
             <View style={styles.greetingRow}>
-              <Text style={styles.hiText}>Hi </Text>
+              <Text style={styles.hiText}>{t("Hi")}</Text>
               <Text style={styles.heartEmoji}>❤️</Text>
               <Text style={styles.heartEmoji}>💜</Text>
               <Text style={styles.heartEmoji}>💙</Text>
@@ -108,7 +112,7 @@ dispatch(getOnlineUsers({page: 1, limit: 4})).unwrap()
 
       {/* App Title */}
       <View style={styles.titleContainer}>
-        <Text style={styles.appTitle}>FLAY CHAT BAR </Text>
+        <Text style={styles.appTitle}>{t("FLAY CHAT BAR")}</Text>
         <MocktailIcon height={28} width={28} />
       </View>
 
@@ -118,9 +122,9 @@ dispatch(getOnlineUsers({page: 1, limit: 4})).unwrap()
       >
         {/* Welcome Card */}
         <View style={styles.welcomeCard}>
-          <Text style={styles.welcomeTitle}>Welcome back, {user?.name}</Text>
+          <Text style={styles.welcomeTitle}>{t("Welcome back")}, {user?.name}</Text>
           <Text style={styles.welcomeSubtitle}>
-            Discover people, start conversation,{'\n'}and enjoy virtual drinks.
+            {t("Discover people, start conversation,and enjoy virtual drinks.")}
           </Text>
         </View>
 
@@ -153,15 +157,15 @@ dispatch(getOnlineUsers({page: 1, limit: 4})).unwrap()
 
         {/* Start Chat Button */}
         <TouchableOpacity style={styles.startChatButton}>
-          <Text style={styles.startChatText}>start a free chat with people</Text>
+          <Text style={styles.startChatText}>{t("Start a free chat with people")}</Text>
         </TouchableOpacity>
 
         {/* Who's Online Section */}
         <View style={styles.onlineSection}>
           <View style={styles.onlineHeader}>
-            <Text style={styles.onlineSectionTitle}>Who's Online at Bar</Text>
+            <Text style={styles.onlineSectionTitle}>{t("Who's Online at Bar")}</Text>
             <TouchableOpacity onPress={()=>navigate('App',{screen:'Explore'})}>
-              <Text style={styles.viewAllButton}>View All</Text>
+              <Text style={styles.viewAllButton}>{t("View All")}</Text>
             </TouchableOpacity>
           </View>
 

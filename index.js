@@ -57,8 +57,8 @@ setBackgroundMessageHandler(getMessaging(), async (remoteMessage) => {
                 category: AndroidCategory.CALL,
                 sound: 'ringtone',
                 vibrationPattern: [500, 500, 500, 500],
-                ongoing: true,
-                autoCancel: false,
+                ongoing: false,
+                autoCancel: true,
                 timeoutAfter: 60000,
                 person: {
                     name: callerName,

@@ -31,3 +31,4 @@ export { default as ImageIcon } from '../Icons/image.svg';
 export { default as SendIcon } from '../Icons/send.svg';
 export { default as ArrowLeftIcon } from '../Icons/arrowLeft.svg';
 export { default as ArrowRightIcon } from '../Icons/arrowRight.svg';
+export { default as ThikIcon } from '../Icons/thik.svg';

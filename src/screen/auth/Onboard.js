@@ -2,8 +2,10 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions } from 'rea
 import styles from './styles';
 import { MocktailIcon } from '../../Assets/theme';
 import { navigate } from '../../../utils/navigationRef';
+import { useTranslation } from 'react-i18next';
 
 const Onboard = () => {
+  const { t } = useTranslation();
   return (
     <View style={styles.container}>
       {/* Bar Illustration */}
@@ -17,20 +19,20 @@ const Onboard = () => {
 
       {/* Content Section */}
       <View style={styles.contentContainer}>
-        <Text style={styles.welcomeText}>Welcome to the</Text>
+        <Text style={styles.welcomeText}>{t("Welcome to the")}</Text>
         <View style={styles.titleRow}>
-          <Text style={styles.titleText}>FLAY CHAT BAR </Text>
+          <Text style={styles.titleText}>{t("FLAY CHAT BAR")} </Text>
           <MocktailIcon width={35} height={35} />
         </View>
 
         {/* Buttons */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.registerButton} onPress={()=>navigate('SignUp')}>
-            <Text style={styles.registerButtonText}>Register</Text>
+            <Text style={styles.registerButtonText}>{t("Register")}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.signInButton} onPress={()=>navigate('SignIn')}>
-            <Text style={styles.registerButtonText}>Sign In</Text>
+            <Text style={styles.registerButtonText}>{t("Sign In")}</Text>
           </TouchableOpacity>
 
           {/* <TouchableOpacity onPress={()=>navigate('App')}>

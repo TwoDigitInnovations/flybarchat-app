@@ -5,6 +5,7 @@ import SignIn from '../screen/auth/SignIn';
 import Onboard from '../screen/auth/Onboard';
 import SignUp from '../screen/auth/SignUp';
 import ForgotPassword from '../screen/auth/ForgotPassword';
+import LanguageChange from '../screen/auth/LanguageChange';
 import ChatDetail from '../screen/app/ChatDetail';
 import Profile from '../screen/app/Profile';
 import Menu from '../screen/app/Menu';
@@ -18,7 +19,6 @@ import VideoCallScreen from '../screen/app/VideoCallScreen'
 const Stack = createNativeStackNavigator();
 const AuthStack = createNativeStackNavigator();
 
-const generateRoomId = (id1, id2) => [id1, id2].sort().join('__');
 
 const AuthNavigate = () => {
   return (
@@ -27,6 +27,7 @@ const AuthNavigate = () => {
       <AuthStack.Screen name="SignIn" component={SignIn} />
       <AuthStack.Screen name="SignUp" component={SignUp} />
       <AuthStack.Screen name="ForgotPassword" component={ForgotPassword} />
+      <AuthStack.Screen name="LanguageChange" component={LanguageChange} />
 
     </AuthStack.Navigator>
   );

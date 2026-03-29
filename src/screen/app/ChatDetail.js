@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput,FlatList,KeyboardAvoidingView,Platform,Keyboard,Dimensions,
+import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput,FlatList,KeyboardAvoidingView,Platform,Keyboard,Dimensions, Modal, ActivityIndicator,
 } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { Back2Icon, CallIcon, LikeIcon, MicIcon, MusicIcon, PlusIcon, SendIcon, SmileIcon, VideoIcon,  } from '../../Assets/theme'
@@ -12,17 +12,22 @@ import { io } from 'socket.io-client';
 import { SOCKET_URL } from '../../../utils/config';
 import IncomingCallScreen from './IncommingCallScreen'
 import InCallManager from 'react-native-incall-manager';
+import { useTranslation } from 'react-i18next'
+import TranslateHandled from '../../Assets/Component/TranslateHandled'
+import translate from 'google-translate-api-x'
 
 
 const ChatDetail = (props) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
 const routeData = props?.route?.params;
 console.log('routeData',routeData)
 const [connectionId, setConnectionId] = useState(routeData?.connection || null);
 
+const selectedCode = useSelector(state => state.language.langCode);
   const user = useSelector(state => state.auth.user);
-    const [message, setmessage] = useState('');
+  const [message, setmessage] = useState('');
   const [userimg, setuserimg] = useState('');
   const listRef = useRef();
   const [list, setlist] = useState([]);
@@ -120,41 +125,211 @@ useEffect(() => {
     // return
   };
 
-  const renderMessage = ({ item }) => {
-    // if (item.type === 'date') {
-    //   return (
-    //     <View style={styles.dateBadge}>
-    //       <Text style={styles.dateText}>{item.text}</Text>
-    //     </View>
-    //   )
-    // }
+  //////////////////
+  const [translatedMessages, setTranslatedMessages] = useState({}); 
 
-    if (item?.sender?._id == user?._id) {
-      return (
+const [activeMenu, setActiveMenu] = useState(null); // just messageId string or null
+
+const handleLongPress = (item) => {
+  setActiveMenu(item._id);
+};
+
+// Fix: add await
+const handleTranslate = async (item) => {
+  setActiveMenu(null);
+
+  if (translatedMessages[item._id]?.text) {
+    // Already translated — toggle visibility back on
+    setTranslatedMessages(prev => ({
+      ...prev,
+      [item._id]: { ...prev[item._id], visible: true }
+    }));
+    return;
+  }
+
+  // Show loading
+  setTranslatedMessages(prev => ({
+    ...prev,
+    [item._id]: { text: null, visible: true, loading: true }
+  }));
+
+  const translated = await translateText(item.message); // ← was missing await
+
+  setTranslatedMessages(prev => ({
+    ...prev,
+    [item._id]: { text: translated, visible: true, loading: false }
+  }));
+};
+
+
+
+const translateText = async (text) => {
+  try {
+    const result = await translate(text, { to: selectedCode });
+    return result.text || text;
+  } catch (error) {
+    console.error('Translation error:', error);
+    return text;
+  }
+};
+const hideTranslation = (messageId) => {
+  setTranslatedMessages(prev => ({
+    ...prev,
+    [messageId]: { ...prev[messageId], visible: false }
+  }));
+};
+
+//////////////////////
+
+  const renderMessage = ({ item }) => {
+  const translation = translatedMessages[item._id];
+  const isMenuOpen = activeMenu === item._id;
+  const isAlreadyTranslated = !!translation?.text;
+
+  const ActionBar = () => (
+    <TouchableOpacity activeOpacity={1} onPress={() => setActiveMenu(null)}>
+      <View style={styles.actionBar}>
+        {/* <TouchableOpacity
+          style={styles.actionBarItem}
+          onPress={() => {
+            // Copy to clipboard
+            // Clipboard.setString(item.message);
+            setActiveMenu(null);
+          }}
+        >
+          <Text style={styles.actionBarText}>Copy</Text>
+        </TouchableOpacity> */}
+
+        <View style={styles.actionBarDivider} />
+
+        {/* Only show Translate if not yet translated */}
+        {!isAlreadyTranslated && (
+          <>
+            <TouchableOpacity
+              style={styles.actionBarItem}
+              onPress={() => handleTranslate(item)}
+            >
+              <Text style={styles.actionBarText}>Translate</Text>
+            </TouchableOpacity>
+            <View style={styles.actionBarDivider} />
+          </>
+        )}
+
+        {/* Show Hide Translation if already translated and visible */}
+        {isAlreadyTranslated && translation?.visible && (
+          <>
+            <TouchableOpacity
+              style={styles.actionBarItem}
+              onPress={() => {
+                hideTranslation(item._id);
+                setActiveMenu(null);
+              }}
+            >
+              <Text style={styles.actionBarText}>Hide</Text>
+            </TouchableOpacity>
+            <View style={styles.actionBarDivider} />
+          </>
+        )}
+
+        {/* Show Translate again if hidden */}
+        {isAlreadyTranslated && !translation?.visible && (
+          <>
+            <TouchableOpacity
+              style={styles.actionBarItem}
+              onPress={() => handleTranslate(item)}
+            >
+              <Text style={styles.actionBarText}>Translate</Text>
+            </TouchableOpacity>
+            <View style={styles.actionBarDivider} />
+          </>
+        )}
+
+        <TouchableOpacity
+          style={styles.actionBarItem}
+          onPress={() => setActiveMenu(null)}
+        >
+          <Text style={styles.actionBarText}>Cancel</Text>
+        </TouchableOpacity>
+      </View>
+    </TouchableOpacity>
+  );
+
+  const TranslationBubble = () => (
+    <View style={styles.translationBubble}>
+      <View style={styles.translationHeader}>
+        <Text style={styles.translationIcon}>🌐</Text>
+        <Text style={styles.translationLabel}>Translated</Text>
+        <TouchableOpacity onPress={() => hideTranslation(item._id)}>
+          <Text style={styles.hideTranslation}>✕</Text>
+        </TouchableOpacity>
+      </View>
+      {translation?.loading ? (
+        <ActivityIndicator size="small" color="#4AAED9" style={{ marginVertical: 4 }} />
+      ) : (
+        <Text style={styles.translationText}>{translation?.text}</Text>
+      )}
+    </View>
+  );
+
+  if (item?.sender?._id == user?._id) {
+    return (
+      <TouchableOpacity
+        onLongPress={() => handleLongPress(item)}
+        onPress={() => activeMenu && setActiveMenu(null)}
+        delayLongPress={400}
+        activeOpacity={0.9}
+      >
+        {isMenuOpen && (
+          <View style={styles.actionBarWrapperRight}>
+            <ActionBar />
+          </View>
+        )}
         <View style={styles.sentMessageContainer}>
           <View style={styles.sentBubble}>
-            <Text style={styles.sentText}>{item.message}</Text>
+            <Text style={styles.sentText}>{item?.message}</Text>
           </View>
           <Text style={styles.sentTime}>{item.time}</Text>
         </View>
-      )
-    }
+      </TouchableOpacity>
+    );
+  }
 
-    return (
+  return (
+    <TouchableOpacity
+      onLongPress={() => handleLongPress(item)}
+      onPress={() => activeMenu && setActiveMenu(null)}
+      delayLongPress={400}
+      activeOpacity={0.9}
+    >
+      {isMenuOpen && (
+        <View style={styles.actionBarWrapperLeft}>
+          <ActionBar />
+        </View>
+      )}
       <View style={styles.receivedMessageContainer}>
         <Image
-          source={item?.user?.image?{ uri: item.user.image }:require('../../Assets/Images/profile2.png')}
+          source={
+            item?.user?.image
+              ? { uri: item.user.image }
+              : require('../../Assets/Images/profile2.png')
+          }
           style={styles.messageAvatar}
         />
         <View style={styles.receivedContent}>
           <View style={styles.receivedBubble}>
             <Text style={styles.receivedText}>{item?.message}</Text>
           </View>
-          <Text style={styles.sentTime}>{moment(item?.lastMessage?.msgtime).format('DD-MM-YY hh:mm A')}</Text>
+
+          {translation?.visible && <TranslationBubble />}
+
+          <Text style={styles.sentTime}>
+            {moment(item?.lastMessage?.msgtime).format('DD-MM-YY hh:mm A')}
+          </Text>
         </View>
       </View>
-    )
-  }
+    </TouchableOpacity>
+  );
+};
     const getConnection = (body) => {
     dispatch(checkConnection(body)).unwrap()
       .then(res => {
@@ -247,6 +422,8 @@ const handleVideoCall = async () => {
         </View>
       </View>
 
+      
+
       {/* Messages List */}
       <FlatList
         data={list}
@@ -267,7 +444,7 @@ const handleVideoCall = async () => {
                 fontSize: 16,
                 fontFamily: FONTS.Medium,
               }}>
-              No Conversation Available
+              {t("No Conversation Available")}
             </Text>
           </View>
         )}
@@ -279,12 +456,12 @@ const handleVideoCall = async () => {
       <View style={styles.actionsContainer}>
         <TouchableOpacity style={styles.actionButton} onPress={()=>navigate('Banner')}>
           <Text style={styles.wineGlass}>🍷</Text>
-          <Text style={[styles.actionText,{marginLeft:0}]}>Offer a drink to unlock video call</Text>
+          <Text style={[styles.actionText,{marginLeft:0}]}>{t("Offer a drink to unlock video call")}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.actionButton} onPress={()=>navigate('Music')}>
           <MusicIcon height={20} width={20} />
-          <Text style={styles.actionText}>Purchase and dedicate a song</Text>
+          <Text style={styles.actionText}>{t("Purchase and dedicate a song")}</Text>
         </TouchableOpacity>
       </View>
 
@@ -301,7 +478,7 @@ const handleVideoCall = async () => {
         <View style={styles.textInputContainer}>
           <TextInput
             style={styles.textInput}
-            placeholder="Message"
+            placeholder={t("Message")}
             placeholderTextColor="#6a6a6a"
             value={message}
             onChangeText={setmessage}
@@ -403,48 +580,24 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily:FONTS.SemiBold,
   },
-  receivedMessageContainer: {
-    flexDirection: 'row',
-    marginBottom: 15,
-    alignItems: 'flex-end',
-  },
-  messageAvatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    marginRight: 10,
-  },
-  receivedContent: {
-    flex: 1,
-    // Width: '100%',
-    alignSelf: 'flex-start',  // shrinks to content width
-    maxWidth: '75%',
-  },
-  receivedBubble: {
-    backgroundColor: '#2E3537',
-    padding: 14,
-    borderRadius: 16,
-    borderBottomLeftRadius: 4,
-    maxWidth: '80%',
-    alignSelf:'flex-start'
-  },
-  receivedText: {
-    color: Constants.white,
-    fontSize: 14,
-    fontFamily:FONTS.Regular,
-    lineHeight: 20,
-  },
-  sentMessageContainer: {
-    alignItems: 'flex-end',
-    marginBottom: 15,
-  },
-  sentBubble: {
-    backgroundColor: '#D9D9D9BF',
-    padding: 14,
-    borderRadius: 16,
-    borderBottomRightRadius: 4,
-    maxWidth: '80%',
-  },
+translationHeader: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginBottom: 4,
+  gap: 4,
+},
+translationLabel: {
+  fontSize: 11,
+  color: '#4AAED9',
+  fontFamily: FONTS.Medium,
+  flex: 1,
+},
+menuOverlay: {
+  flex: 1,
+  backgroundColor: 'rgba(0,0,0,0.4)',
+  justifyContent: 'center',
+  alignItems: 'center',
+},
   sentText: {
     color: Constants.black,
     fontSize: 14,
@@ -522,4 +675,116 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  receivedMessageContainer: {
+    flexDirection: 'row',
+    marginBottom: 15,
+    alignItems: 'flex-end',
+  },
+  messageAvatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    marginRight: 10,
+  },
+  receivedContent: {
+    flex: 1,
+    // Width: '100%',
+    alignSelf: 'flex-start',  // shrinks to content width
+    maxWidth: '75%',
+  },
+  receivedBubble: {
+    backgroundColor: '#2E3537',
+    padding: 14,
+    borderRadius: 16,
+    borderBottomLeftRadius: 4,
+    maxWidth: '80%',
+    alignSelf:'flex-start'
+  },
+  receivedText: {
+    color: Constants.white,
+    fontSize: 14,
+    fontFamily:FONTS.Regular,
+    lineHeight: 20,
+  },
+  sentMessageContainer: {
+    alignItems: 'flex-end',
+    marginBottom: 15,
+  },
+  sentBubble: {
+    backgroundColor: '#D9D9D9BF',
+    padding: 14,
+    borderRadius: 16,
+    borderBottomRightRadius: 4,
+    maxWidth: '80%',
+  },
+
+actionBarWrapperLeft: {
+  paddingLeft: 46, // aligns with bubble (avatar width + margin)
+  marginBottom: 6,
+},
+actionBarWrapperRight: {
+  alignItems: 'flex-end',
+  marginBottom: 6,
+},
+actionBar: {
+  flexDirection: 'row',
+  backgroundColor: '#2C3335',
+  borderRadius: 10,
+  paddingVertical: 8,
+  paddingHorizontal: 4,
+  alignSelf: 'flex-start',
+  elevation: 6,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.3,
+  shadowRadius: 4,
+},
+actionBarItem: {
+  paddingHorizontal: 14,
+  paddingVertical: 2,
+},
+actionBarText: {
+  color: Constants.white,
+  fontSize: 13,
+  fontFamily: FONTS.Medium,
+},
+actionBarDivider: {
+  width: 0.5,
+  backgroundColor: '#555',
+  marginVertical: 2,
+},
+
+// Translation bubble (below original)
+translationBubble: {
+  marginTop: 6,
+  backgroundColor: 'transparent',
+  borderWidth: 1,
+  borderColor: '#4AAED9',
+  borderStyle: 'dashed',
+  borderRadius: 12,
+  borderBottomLeftRadius: 4,
+  padding: 10,
+  maxWidth: '80%',
+},
+translationHeader: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginBottom: 4,
+  gap: 4,
+},
+translationIcon: {
+  fontSize: 12,
+},
+hideTranslation: {
+  color: '#4AAED9',
+  fontSize: 14,
+  paddingHorizontal: 4,
+},
+translationText: {
+  color: Constants.white,
+  fontSize: 13,
+  fontFamily: FONTS.Regular,
+  lineHeight: 18,
+  opacity: 0.85,
+},
 })

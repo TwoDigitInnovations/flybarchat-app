@@ -29,6 +29,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import InCallManager from 'react-native-incall-manager';
+import { useTranslation } from 'react-i18next';
 
 const { width: SW, height: SH } = Dimensions.get('window');
 const { IncomingCall } = NativeModules; // Android native bridge
@@ -43,6 +44,7 @@ const IncomingCallScreen = ({
 }) => {
     const [callDuration, setCallDuration] = useState(0);
 
+    const { t } = useTranslation();
     // Animations
     const pulse1 = useRef(new Animated.Value(1)).current;
     const pulse2 = useRef(new Animated.Value(1)).current;
@@ -155,7 +157,7 @@ const IncomingCallScreen = ({
 
                 {/* ── Top section ── */}
                 <SafeAreaView style={S.top}>
-                    <Text style={S.incomingLabel}>INCOMING VIDEO CALL</Text>
+                    <Text style={S.incomingLabel}>{t("INCOMING VIDEO CALL")}</Text>
 
                     {/* Avatar with pulse rings */}
                     <View style={S.avatarContainer}>
@@ -188,7 +190,7 @@ const IncomingCallScreen = ({
                     {/* Remind me */}
                     <TouchableOpacity style={S.secondaryBtn} activeOpacity={0.7}>
                         <Text style={S.secondaryIcon}>🔕</Text>
-                        <Text style={S.secondaryLabel}>Remind me</Text>
+                        <Text style={S.secondaryLabel}>{t("Remind me")}</Text>
                     </TouchableOpacity>
 
                     {/* Main buttons row */}
@@ -203,7 +205,7 @@ const IncomingCallScreen = ({
                             >
                                 <Text style={S.btnIcon}>📵</Text>
                             </TouchableOpacity>
-                            <Text style={S.btnLabel}>Decline</Text>
+                            <Text style={S.btnLabel}>{t("Decline")}</Text>
                         </View>
 
                         {/* Accept — pulsing green */}
@@ -217,7 +219,7 @@ const IncomingCallScreen = ({
                                     <Text style={S.btnIcon}>📞</Text>
                                 </TouchableOpacity>
                             </Animated.View>
-                            <Text style={S.btnLabel}>Accept</Text>
+                            <Text style={S.btnLabel}>{t("Accept")}</Text>
                         </View>
 
                     </View>
@@ -225,7 +227,7 @@ const IncomingCallScreen = ({
                     {/* Message shortcut */}
                     <TouchableOpacity style={S.secondaryBtn} activeOpacity={0.7}>
                         <Text style={S.secondaryIcon}>💬</Text>
-                        <Text style={S.secondaryLabel}>Message</Text>
+                        <Text style={S.secondaryLabel}>{t("Message")}</Text>
                     </TouchableOpacity>
 
                 </SafeAreaView>

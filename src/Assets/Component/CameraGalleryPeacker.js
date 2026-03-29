@@ -12,8 +12,10 @@ import { check, PERMISSIONS, RESULTS, request, requestMultiple } from 'react-nat
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { CameraIcon,CrossIcon,ImageIcon } from '../theme';
 import Constants, { FONTS } from '../Helpers/constant';
+import { useTranslation } from 'react-i18next';
 
 const CameraGalleryPeacker = (props) => {
+  const { t } = useTranslation();
   console.log('props',props)
   const options2 = {
     mediaType: 'photo',
@@ -129,14 +131,14 @@ const CameraGalleryPeacker = (props) => {
             <View style={styles.body}>
               <TouchableOpacity onPress={()=>Platform.OS === 'ios' ? requestMediaPermission(launchCameras, PERMISSIONS.IOS.CAMERA) : launchCameras()} style={styles.smallCard}>
                 <CameraIcon height={30} width={30} color={Constants.white}/>
-                <Text style={[styles.optionTxt,{marginTop:6}]}>Camera</Text>
+                <Text style={[styles.optionTxt,{marginTop:6}]}>{t("Camera")}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 onPress={()=>Platform.OS === 'ios' ? requestMediaPermission(launchImageLibrarys, PERMISSIONS.IOS.PHOTO_LIBRARY) : launchImageLibrarys()}
                 style={styles.smallCard}>
                 <ImageIcon height={23} width={23} color={Constants.white}/>
-                <Text style={styles.optionTxt}>Gallery</Text>
+                <Text style={styles.optionTxt}>{t("Gallery")}</Text>
               </TouchableOpacity>
             </View>
 
