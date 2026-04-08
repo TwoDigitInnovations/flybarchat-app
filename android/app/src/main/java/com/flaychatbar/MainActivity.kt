@@ -3,9 +3,6 @@ package com.flaychatbar
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.media.AudioAttributes
-import android.media.RingtoneManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import com.facebook.react.ReactActivity
@@ -67,7 +64,9 @@ class MainActivity : ReactActivity() {
     val manager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
       ?: return
 
-    val channelId = "incoming_call_v3"
+    // Silent channel — RingtoneService handles all audio/vibration so the
+    // notification itself must not play a competing sound.
+    val channelId = "incoming_call_silent"
     if (manager.getNotificationChannel(channelId) != null) return
 
     val channel = NotificationChannel(
@@ -76,27 +75,11 @@ class MainActivity : ReactActivity() {
       NotificationManager.IMPORTANCE_HIGH
     ).apply {
       description = "Incoming video call notifications"
-      enableVibration(true)
-      vibrationPattern = longArrayOf(0, 500, 500, 500, 500, 500)
+      setSound(null, null)   // no notification sound — RingtoneService loops it
+      enableVibration(false) // no notification vibration — RingtoneService handles it
       setShowBadge(true)
       lockscreenVisibility = android.app.Notification.VISIBILITY_PUBLIC
     }
-
-    val soundUri: Uri = try {
-      val resId = resources.getIdentifier("ringtone", "raw", packageName)
-      if (resId != 0) Uri.parse("android.resource://$packageName/$resId")
-      else RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
-    } catch (e: Exception) {
-      RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
-    }
-
-    channel.setSound(
-      soundUri,
-      AudioAttributes.Builder()
-        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-        .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
-        .build()
-    )
 
     manager.createNotificationChannel(channel)
   }

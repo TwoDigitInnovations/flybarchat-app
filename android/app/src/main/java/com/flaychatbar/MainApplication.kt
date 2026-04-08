@@ -38,6 +38,8 @@ class MainApplication : Application(), ReactApplication {
     // Track foreground/background so FCM handler skips CallActivity when app is open
     registerActivityLifecycleCallbacks(AppLifecycleTracker)
 
+    BarFrameInterceptor.init(this)
+
     loadReactNative(this)
   }
 }

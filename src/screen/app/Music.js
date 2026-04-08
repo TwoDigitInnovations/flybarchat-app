@@ -9,7 +9,7 @@ import {
   Image,
 } from 'react-native';
 import Constants, { Currency, FONTS } from '../../Assets/Helpers/constant';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getAllMusic } from '../../../redux/Music/musicAction';
 import { Back2Icon } from '../../Assets/theme';
 import { useTranslation } from 'react-i18next';
@@ -62,6 +62,7 @@ export default function SongsMenuScreen({ navigation }) {
   const [displayCount, setDisplayCount] = useState(7); // Controls initial 10 items display
   const [seeMoreClicked, setSeeMoreClicked] = useState(false);
   const dispatch = useDispatch();
+  const user = useSelector(state => state.auth.user);
   const [musicList,setMusicList]=useState([])
   const [page, setPage] = useState(1);
   const [curentData, setCurrentData] = useState([]);
@@ -113,10 +114,12 @@ const handleSeeMore = () => {
           <Text style={styles.headerTitle}>{t("Songs")}</Text>
           <Text style={styles.headerSubtitle}>{t("Buy a song to dedicate the person")}</Text>
         </View>
-        <View style={styles.headerSpacer} />
+        <View style={styles.walletcov} >
+                  <Text style={styles.walletText}>{Currency} {Number(user?.wallet || 0).toFixed(2)}</Text>
+                </View>
       </View>
 
-    <ImageBackground style={{flex:1,}} source={require('.././../Assets/Images/musicbg.png')} resizeMode='stretch'>
+    {/* <ImageBackground style={{flex:1,}} source={require('.././../Assets/Images/musicbg.png')} resizeMode='stretch'> */}
       {/* Category Tabs */}
       {/* <ScrollView
         horizontal
@@ -180,7 +183,7 @@ const handleSeeMore = () => {
           <Text style={styles.ctaText}>{t("May be later")}</Text>
         </TouchableOpacity>
 
-    </ImageBackground>
+    {/* </ImageBackground> */}
     </View>
   );
 }
@@ -219,29 +222,30 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   backButton: {
-    width: 36,
-    height: 36,
+    width: 35,
+    height: 35,
+    borderRadius: 20,
+    backgroundColor: Constants.light_pink,
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: 12,
+    boxShadow: '0px 2px 4px 0.5px gray',
   },
   headerTitleWrap: {
     flex: 1,
     alignItems: 'center',
   },
   headerTitle: {
-    color: Constants.white,
+    color: Constants.black,
     fontSize: 18,
-    fontFamily:FONTS.SemiBold,
+    fontFamily:FONTS.Inter_SemiBold,
   },
   headerSubtitle: {
-    color: Constants.white,
-    fontFamily:FONTS.Medium,
+    color: Constants.black,
+    fontFamily:FONTS.Inter_Regular,
     fontSize: 12,
     marginTop: 2,
     letterSpacing: 0.1,
-  },
-  headerSpacer: {
-    width: 36,
   },
 
   // Category tabs
@@ -326,9 +330,9 @@ const styles = StyleSheet.create({
     justifyContent:'center'
   },
   songTitle: {
-    color: Constants.white,
+    color: Constants.black,
     fontSize: 14,
-    fontFamily:FONTS.Medium,
+    fontFamily:FONTS.Inter_SemiBold,
     marginBottom: 3,
   },
   songArtist: {
@@ -342,12 +346,12 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   playIcon: {
-    color: Constants.customgrey3,
+    color: Constants.black,
     fontSize: 12,
     marginRight: 6,
   },
   songPrice: {
-    color: Constants.white,
+    color: Constants.black,
     fontSize: 14,
     fontFamily:FONTS.SemiBold,
   },
@@ -355,22 +359,23 @@ const styles = StyleSheet.create({
   // See more
   seeMoreButton: {
     alignSelf: 'center',
-    backgroundColor: Constants.white,
+    backgroundColor: Constants.light_pink,
     borderRadius: 20,
     paddingHorizontal: 20,
     paddingVertical: 8,
     marginTop: 10,
     marginBottom: 6,
+    boxShadow: '0px 2px 4px 0.5px gray',
   },
   seeMoreText: {
-    color: Constants.light_black,
+    color: Constants.black,
     fontSize: 12,
     fontFamily:FONTS.SemiBold,
   },
 
   // Footer note
   footerNote: {
-    color: Constants.white,
+    color: Constants.black,
     fontSize: 12,
     fontFamily:FONTS.Regular,
     textAlign: 'center',
@@ -397,5 +402,16 @@ const styles = StyleSheet.create({
     color: Constants.white,
     fontSize: 16,
     fontFamily:FONTS.SemiBold,
+  },
+  walletText:{
+    color: Constants.white,
+    fontSize: 14,
+    fontFamily:FONTS.Medium,
+  },
+  walletcov:{
+    backgroundColor: Constants.custom_red,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
   },
 });

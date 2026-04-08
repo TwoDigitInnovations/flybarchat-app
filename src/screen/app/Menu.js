@@ -7,119 +7,140 @@ import {
   StyleSheet,
   Dimensions,
   FlatList,
+  StatusBar,
 } from 'react-native';
-import { ArrowLeftIcon, ArrowRightIcon, Back2Icon } from '../../Assets/theme';
-import { useDispatch } from 'react-redux';
-import { getAllMenu } from '../../../redux/Menu/menuAction'
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllMenu } from '../../../redux/Menu/menuAction';
 import Constants, { Currency, FONTS } from '../../Assets/Helpers/constant';
 import { useTranslation } from 'react-i18next';
+import { SOCKET_URL } from '../../../utils/config';
+import { deductMenuBalence } from '../../../redux/auth/authAction';
+import { goBack, navigate } from '../../../utils/navigationRef';
+import Toast from 'react-native-toast-message';
+import { ArrowRight2Icon, Back2Icon, BackIcon } from '../../Assets/theme';
 
-const MenuItem = ({ item,index }) => {
+const MenuItem = ({ item, index, onPress }) => {
   const { t } = useTranslation();
-  const [pressed, setPressed] = useState(false);
-  const isRight = (index+1)%2===0;
+  const isRight = (index + 1) % 2 === 0;
 
   return (
     <TouchableOpacity
-      style={[styles.menuItem, pressed && styles.menuItemPressed]}
-      onPressIn={() => setPressed(true)}
-      onPressOut={() => setPressed(false)}
-      activeOpacity={0.85}
-    >
-      {/* Left side image */}
-      {!isRight && (
-        <View style={styles.imageWrapLeft}>
-          <Image source={{uri:item?.image}} style={styles.emojiImage} />
-          {item?.price && (
-            <View style={styles.priceBadge}>
-              <Text style={styles.priceText}>{Currency}{item?.price}</Text>
-            </View>
-          )}
-        </View>
-      )}
-
-      {/* Center content */}
-      <View style={[styles.itemContent, isRight && styles.itemContentRight]}>
+      style={styles.menuItem}
+      onPress={onPress}
+      activeOpacity={0.85}>
+      <Image source={{ uri: item?.image }} style={[styles.itemImage,{ transform: [{ rotate: isRight ? '3deg' : '-3deg' }] }]} />
+      <View style={styles.itemContent}>
         <Text style={styles.itemName}>{item?.name}</Text>
-        <Text style={styles.itemSubtitle}>{item.time} {t("min video call")}</Text>
-        {isRight?<ArrowRightIcon />:<ArrowLeftIcon />}
+        <Text style={styles.itemSubtitle}>{item?.time} {t('min video call')}</Text>
+        <Text style={styles.itemPrice}>{Currency}{item?.price}</Text>
       </View>
-
-      {/* Right side image */}
-      {isRight && (
-        <View style={styles.imageWrapRight}>
-          {item?.price && (
-            <View style={styles.priceBadge}>
-              <Text style={styles.priceText}>{Currency}{item?.price}</Text>
-            </View>
-          )}
-          <Image source={{uri:item?.image}} style={styles.emojiImage} />
-        </View>
-      )}
+      <View style={styles.arrowWrap}>
+        <ArrowRight2Icon color={Constants.black} />
+      </View>
     </TouchableOpacity>
   );
 };
 
-export default function DrinkMenuScreen({ navigation }) {
+export default function DrinkMenuScreen() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const [menuList,setMenuList]=useState([])
-  useEffect(()=>{
-     getMenuList()
-  },[])
+  const user = useSelector(state => state.auth.user);
+  const callUserDetail = useSelector(state => state.auth.callUserDetail);
+  const [menuList, setMenuList] = useState([]);
+
+  useEffect(() => {
+    getMenuList();
+  }, []);
+
   const getMenuList = () => {
-      dispatch(getAllMenu()).unwrap()
-        .then(res => {
-          console.log('data', res);
-          setMenuList(res)
-        })
-        .catch(error => {
-          console.error('GetOnline Users Error:', error);
-        });
+    dispatch(getAllMenu())
+      .unwrap()
+      .then(res => {
+        setMenuList(res);
+      })
+      .catch(error => {
+        console.error('GetMenu Error:', error);
+      });
+  };
+
+  const purchesMenu = item => {
+    if (Number(item) > Number(user?.wallet || 0)) {
+      Toast.show({
+        type: 'error',
+        text1: t('Insufficient Balance'),
+        text2: t('Please recharge your wallet to continue.'),
+      });
+      return;
     }
+    dispatch(deductMenuBalence({ menu_price: Number(item) }))
+      .unwrap()
+      .then(res => {
+        handleVideoCall();
+      })
+      .catch(error => {
+        console.error('deductMenuBalence Error:', error);
+      });
+  };
+
+  const generateRoomId = (id1, id2) => [id1, id2].sort().join('__');
+
+  const handleVideoCall = async () => {
+    const roomId = generateRoomId(user?._id, callUserDetail?.calleeId);
+    try {
+      await fetch(`${SOCKET_URL}/notify-call`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          callerId: user?._id,
+          callerName: user?.name,
+          calleeId: callUserDetail?.calleeId,
+          roomId,
+        }),
+      });
+    } catch (err) {
+      console.log('[ChatDetail] notify-call error:', err.message);
+    }
+    navigate('VideoCall', {
+      roomId,
+      calleeId: callUserDetail?.calleeId,
+      calleeName: callUserDetail?.calleeName,
+      callerName: user?.name,
+      isInitiator: true,
+    });
+  };
+
   return (
     <View style={styles.safeArea}>
 
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation?.goBack()}>
-          <Back2Icon />
-        </TouchableOpacity>
+        <TouchableOpacity
+                               style={styles.backButton}
+                               onPress={() => goBack()}>
+                               <Back2Icon height={24} width={24} />
+                             </TouchableOpacity>
         <View style={styles.headerTitleWrap}>
-          <Text style={styles.headerTitle}>{t("Drink Menu")}</Text>
-          <Text style={styles.headerSubtitle}>{t("Send a drink to Unlock video call")}</Text>
+          <Text style={styles.headerTitle}>{t('Drink Menu')}</Text>
+          <Text style={styles.headerSubtitle}>{t('Send a drink to Unlock video call')}</Text>
         </View>
-        <View style={styles.headerSpacer} />
+        
+        <View style={styles.walletcov} >
+          <Text style={styles.walletText}>{Currency} {Number(user?.wallet || 0).toFixed(2)}</Text>
+        </View>
       </View>
 
-      {/* Divider */}
-      <View style={styles.divider} />
-
+      {/* List */}
       <FlatList
         data={menuList}
-        renderItem={({item, index}) => (
-          <View key={item._id} style={{width:'70%',alignSelf:(index+1)%2===0?'flex-end':'flex-start'}}>
-            <MenuItem item={item} index={index} />
-            {index < menuList.length - 1 && <View style={styles.itemDivider} />}
-          </View>
+        contentContainerStyle={styles.listContent}
+        renderItem={({ item,index }) => (
+          <MenuItem item={item} index={index} onPress={() => purchesMenu(item?.price)} />
         )}
         keyExtractor={item => item._id}
-        // style={styles.messagesList}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListEmptyComponent={() => (
-          <View
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: Dimensions.get('window').height - 200,
-            }}>
-            <Text
-              style={{
-                color: Constants.white,
-                fontSize: 18,
-                fontFamily: FONTS.Medium,
-              }}>
-              {t("No Menu Available")}
-            </Text>
+          <View style={styles.emptyWrap}>
+            <Text style={styles.emptyText}>{t('No Menu Available')}</Text>
           </View>
         )}
         showsVerticalScrollIndicator={false}
@@ -127,8 +148,11 @@ export default function DrinkMenuScreen({ navigation }) {
 
       {/* Bottom CTA */}
       <View style={styles.bottomContainer}>
-        <TouchableOpacity style={styles.ctaButton} activeOpacity={0.8}>
-          <Text style={styles.ctaText}>{t("May be later")}</Text>
+        <TouchableOpacity
+          style={styles.ctaButton}
+          activeOpacity={0.85}
+          onPress={() => goBack()}>
+          <Text style={styles.ctaText}>{t('May be later')}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -147,157 +171,142 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 14,
+    backgroundColor: Constants.light_black,
   },
   backButton: {
-    width: 36,
-    height: 36,
+    width: 35,
+    height: 35,
+    borderRadius: 20,
+    backgroundColor: Constants.light_pink,
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: 12,
+    boxShadow: '0px 2px 4px 0.5px gray',
+  },
+  backArrow: {
+    fontSize: 30,
+    color: '#333',
+    lineHeight: 34,
+    marginTop: -4,
   },
   headerTitleWrap: {
     flex: 1,
     alignItems: 'center',
   },
   headerTitle: {
-    color: Constants.white,
-    fontSize: 20,
-    fontFamily:FONTS.SemiBold,
-    letterSpacing: 0.3,
+    color: Constants.black,
+    fontSize: 18,
+    fontFamily: FONTS.Inter_SemiBold,
   },
   headerSubtitle: {
-    color: Constants.customgrey3,
-    fontFamily:FONTS.Regular,
+    color: Constants.black,
+    fontFamily: FONTS.Inter_Regular,
     fontSize: 12,
     marginTop: 2,
-    letterSpacing: 0.1,
-  },
-  headerSpacer: {
-    width: 36,
   },
 
-  divider: {
-    height: 1,
-    backgroundColor: '#2A2A2A',
-    marginHorizontal: 0,
-  },
+  // List
+  listContent: {
+  paddingHorizontal: 20,  // slightly more horizontal padding
+  paddingTop: 16,
+  paddingBottom: 16,
+  gap: 16,                // if using React Native 0.71+, or use separator
+},
 
-  // Menu Item
+  // Card
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 18,
-    paddingHorizontal: 20,
-    minHeight: 100,
+    backgroundColor: '#F8F1F7',
+    borderRadius: 16,
+    padding: 14,
+    boxShadow: '0px 2px 4px 0.5px gray',
   },
-  menuItemPressed: {
-    backgroundColor: '#1A1A1A',
+  itemImage: {
+    width: 72,
+    height: 72,
+    borderRadius: 10,
+    backgroundColor: '#f0e6ee',
   },
-
-  // Image areas
-  imageWrapLeft: {
-    width: 80,
-    height: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
-    marginRight: 16,
-  },
-  imageWrapRight: {
-    width: 80,
-    height: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
-    marginLeft: 16,
-  },
-  emojiImage: {
-    height: 52,
-    width: 52,
-    textAlign: 'center',
-  },
-
-  // Price Badge
-  priceBadge: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    backgroundColor: '#C8922A',
-    borderRadius: 14,
-    minWidth: 36,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.4,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  priceText: {
-    color: Constants.white,
-    fontSize: 12,
-    fontFamily:FONTS.Medium,
-    letterSpacing: 0.2,
-  },
-
-  // Item content
   itemContent: {
     flex: 1,
-    alignItems: 'flex-end',
-    marginRight:20,
-    marginLeft:0
-  },
-  itemContentRight: {
-    alignItems: 'flex-start',
-    marginRight:0,
-    marginLeft:20
+    marginLeft: 14,
   },
   itemName: {
-    color: Constants.white,
+    color: '#1A1A1A',
     fontSize: 16,
-    fontFamily:FONTS.SemiBold,
-    letterSpacing: 0.2,
+    fontFamily: FONTS.SemiBold,
     marginBottom: 4,
   },
   itemSubtitle: {
-    color: Constants.customgrey3,
-    fontSize: 13,
-    marginBottom: 10,
-    letterSpacing: 0.1,
+    color: Constants.customgrey,
+    fontSize: 12,
+    fontFamily: FONTS.Inter_Regular,
+    marginBottom: 6,
+  },
+  itemPrice: {
+    color: Constants.black,
+    fontSize: 15,
+    fontFamily: FONTS.SemiBold,
+  },
+  arrowWrap: {
+    paddingLeft: 8,
+  },
+  arrowText: {
+    fontSize: 26,
+    color: Constants.custom_red,
+    lineHeight: 30,
   },
 
+  separator: {
+    height: 12,
+  },
 
-  // Item separator
-  itemDivider: {
-    height: 1,
-    backgroundColor: Constants.customgrey3,
+  // Empty
+  emptyWrap: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: Dimensions.get('window').height - 200,
+  },
+  emptyText: {
+    color: Constants.black,
+    fontSize: 18,
+    fontFamily: FONTS.Medium,
   },
 
   // Bottom CTA
   bottomContainer: {
     paddingHorizontal: 20,
-    paddingVertical: 14,
-    paddingBottom: 24,
-    // backgroundColor: '#111111',
+    paddingVertical: 10,
+    backgroundColor: Constants.light_black,
   },
   ctaButton: {
     backgroundColor: Constants.custom_red,
-    borderRadius: 14,
-    paddingVertical: 15,
+    borderRadius: 50,
+    paddingVertical: 16,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: Constants.custom_red,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
     elevation: 6,
   },
   ctaText: {
-    color: Constants.white,
+    color: '#FFFFFF',
     fontSize: 16,
-    fontFamily:FONTS.SemiBold,
+    fontFamily: FONTS.SemiBold,
     letterSpacing: 0.3,
+  },
+  walletText:{
+    color: Constants.white,
+    fontSize: 14,
+    fontFamily:FONTS.Medium,
+  },
+  walletcov:{
+    backgroundColor: Constants.custom_red,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
   },
 });

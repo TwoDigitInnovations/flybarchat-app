@@ -15,6 +15,7 @@ import InCallManager from 'react-native-incall-manager';
 import { useTranslation } from 'react-i18next'
 import TranslateHandled from '../../Assets/Component/TranslateHandled'
 import translate from 'google-translate-api-x'
+import { setCallUserDetail } from '../../../redux/auth/authSlice'
 
 
 const ChatDetail = (props) => {
@@ -357,34 +358,8 @@ const hideTranslation = (messageId) => {
         };
       }, []);
 
-      const generateRoomId = (id1, id2) => [id1, id2].sort().join('__');
-
 const handleVideoCall = async () => {
-    const roomId = generateRoomId(user?._id, routeData._id);
-
-    try {
-      console.log(user,routeData?._id,roomId)
-        await fetch(`${SOCKET_URL}/notify-call`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                callerId: user?._id,
-                callerName: user?.name,
-                calleeId: routeData._id,
-                roomId,
-            }),
-        });
-    } catch (err) {
-        console.log('[ChatDetail] notify-call error:', err.message);
-    }
-
-    navigate('VideoCall', {
-        roomId,
-        calleeId: routeData._id,
-        calleeName: routeData.name || routeData.username,
-        callerName: user?.name,
-        isInitiator: true,
-    });
+    dispatch(setCallUserDetail({calleeId: routeData._id,calleeName: routeData.name})) // Store call details in Redux for access in menu page
 };
 
   return (
@@ -411,7 +386,7 @@ const handleVideoCall = async () => {
           <Text style={styles.headerName}>{routeData?.name}</Text>
         </View>
 
-        <View style={styles.headerRight}>
+        {/* <View style={styles.headerRight}>
           <TouchableOpacity style={styles.headerIconButton}>
             <CallIcon height={20} width={20}/>
           </TouchableOpacity>
@@ -419,7 +394,7 @@ const handleVideoCall = async () => {
           <TouchableOpacity style={styles.headerIconButton} onPress={()=>handleVideoCall()}>
             <VideoIcon height={20} width={20}/>
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
 
       
@@ -440,7 +415,7 @@ const handleVideoCall = async () => {
             }}>
             <Text
               style={{
-                color: Constants.white,
+                color: Constants.black,
                 fontSize: 16,
                 fontFamily: FONTS.Medium,
               }}>
@@ -454,13 +429,13 @@ const handleVideoCall = async () => {
 
       {/* Action Buttons */}
       <View style={styles.actionsContainer}>
-        <TouchableOpacity style={styles.actionButton} onPress={()=>navigate('Banner')}>
+        <TouchableOpacity style={styles.actionButton} onPress={()=>{navigate('Banner'),handleVideoCall()}}>
           <Text style={styles.wineGlass}>🍷</Text>
           <Text style={[styles.actionText,{marginLeft:0}]}>{t("Offer a drink to unlock video call")}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.actionButton} onPress={()=>navigate('Music')}>
-          <MusicIcon height={20} width={20} />
+          <MusicIcon height={20} width={20} color={Constants.black}/>
           <Text style={styles.actionText}>{t("Purchase and dedicate a song")}</Text>
         </TouchableOpacity>
       </View>
@@ -479,11 +454,14 @@ const handleVideoCall = async () => {
           <TextInput
             style={styles.textInput}
             placeholder={t("Message")}
-            placeholderTextColor="#6a6a6a"
+            placeholderTextColor={Constants.greish_pink}
             value={message}
             onChangeText={setmessage}
             multiline
           />
+        <TouchableOpacity onPress={() => sendmessage()} disabled={!message.trim()} style={{marginBottom:keyboardVisible&&Platform.Version<'35'?30:0}}>
+            <SendIcon height={30} onPress={() => sendmessage()} color={message&&message.trim()?Constants.custom_red:Constants.greish_pink}/>
+        </TouchableOpacity>
         </View>
 
         {/* <TouchableOpacity style={styles.inputIconButton}>
@@ -496,9 +474,6 @@ const handleVideoCall = async () => {
         >
           <LikeIcon height={20} width={20} />
         </TouchableOpacity> */}
-        <TouchableOpacity onPress={() => sendmessage()} disabled={!message.trim()} style={{marginBottom:keyboardVisible&&Platform.Version<'35'?30:0}}>
-            <SendIcon height={30} onPress={() => sendmessage()} color={message&&message.trim()?Constants.white:Constants.customgrey2}/>
-        </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
   )
@@ -518,8 +493,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingHorizontal: 16,
     paddingBottom: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#2a2a2a',
+    boxShadow: '0px 1px 4px 0.5px gray',
   },
   headerLeft: {
     flexDirection: 'row',
@@ -530,10 +504,11 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    backgroundColor: Constants.light_pink,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
+    boxShadow: '0px 2px 4px 0.5px gray',
   },
   headerAvatar: {
     width: 42,
@@ -542,7 +517,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   headerName: {
-    color: Constants.white,
+    color: Constants.black,
     fontSize: 16,
     fontFamily:FONTS.SemiBold,
   },
@@ -599,13 +574,13 @@ menuOverlay: {
   alignItems: 'center',
 },
   sentText: {
-    color: Constants.black,
+    color: Constants.white,
     fontSize: 14,
     fontFamily:FONTS.Regular,
     lineHeight: 20,
   },
   sentTime: {
-    color: Constants.white,
+    color: Constants.dark_black,
     fontSize: 11,
     fontFamily:FONTS.Regular,
     marginTop: 4,
@@ -618,18 +593,23 @@ menuOverlay: {
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#A7ACAE59',
+    backgroundColor: '#F8F1F7',
     paddingVertical: 14,
     paddingHorizontal: 16,
-    borderRadius: 12,
+    width: '85%',
+    alignSelf:'center',
+    borderRadius: 18,
     marginBottom: 10,
+    boxShadow: '0px 2px 4px 0.5px gray',
+    borderWidth:1,
+    borderColor:'#93025F29'
   },
   wineGlass: {
     fontSize: 18,
     // marginRight: 10,
   },
   actionText: {
-    color: Constants.white,
+    color: Constants.black,
     fontSize: 14,
     fontFamily:FONTS.Medium,
     marginLeft: 10,
@@ -639,10 +619,10 @@ menuOverlay: {
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingTop: 12,
-    paddingBottom: 30,
+    paddingBottom: 5,
     // backgroundColor: '#1a1a1a',
-    borderTopWidth: 1,
-    borderTopColor: '#2a2a2a',
+    // borderTopWidth: 1,
+    // borderTopColor: '#2a2a2a',
   },
   inputIconButton: {
     width: 36,
@@ -650,24 +630,27 @@ menuOverlay: {
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 4,
-    backgroundColor:Constants.customgrey2,
+    backgroundColor:Constants.custom_red,
     borderRadius:25
   },
   textInputContainer: {
     flex: 1,
-    backgroundColor: '#2E3537',
+    backgroundColor: '#F8F1F7',
     borderRadius: 20,
     paddingHorizontal: 16,
     // paddingVertical: 8,
     marginHorizontal: 8,
-    minHeight: 40,
-    justifyContent: 'center',
+    minHeight: 45,
+    alignItems: 'center',
+    flexDirection:'row',
+    boxShadow: '0px 2px 4px 0.5px gray',
   },
   textInput: {
-    color: Constants.white,
+    color: Constants.black,
     fontSize: 14,
     fontFamily:FONTS.Regular,
     maxHeight: 100,
+    flex: 1,
   },
   sendButton: {
     width: 36,
@@ -693,7 +676,7 @@ menuOverlay: {
     maxWidth: '75%',
   },
   receivedBubble: {
-    backgroundColor: '#2E3537',
+    backgroundColor: '#FFFFFF69',
     padding: 14,
     borderRadius: 16,
     borderBottomLeftRadius: 4,
@@ -701,7 +684,7 @@ menuOverlay: {
     alignSelf:'flex-start'
   },
   receivedText: {
-    color: Constants.white,
+    color: Constants.dark_black,
     fontSize: 14,
     fontFamily:FONTS.Regular,
     lineHeight: 20,
@@ -711,7 +694,7 @@ menuOverlay: {
     marginBottom: 15,
   },
   sentBubble: {
-    backgroundColor: '#D9D9D9BF',
+    backgroundColor: '#F8A2D1',
     padding: 14,
     borderRadius: 16,
     borderBottomRightRadius: 4,
@@ -728,7 +711,7 @@ actionBarWrapperRight: {
 },
 actionBar: {
   flexDirection: 'row',
-  backgroundColor: '#2C3335',
+  backgroundColor: Constants.light_pink,
   borderRadius: 10,
   paddingVertical: 8,
   paddingHorizontal: 4,
@@ -744,13 +727,13 @@ actionBarItem: {
   paddingVertical: 2,
 },
 actionBarText: {
-  color: Constants.white,
+  color: Constants.black,
   fontSize: 13,
   fontFamily: FONTS.Medium,
 },
 actionBarDivider: {
   width: 0.5,
-  backgroundColor: '#555',
+  backgroundColor: Constants.custom_red,
   marginVertical: 2,
 },
 
@@ -781,7 +764,7 @@ hideTranslation: {
   paddingHorizontal: 4,
 },
 translationText: {
-  color: Constants.white,
+  color: Constants.black,
   fontSize: 13,
   fontFamily: FONTS.Regular,
   lineHeight: 18,

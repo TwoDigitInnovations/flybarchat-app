@@ -16,6 +16,7 @@ import ru from './locales/ru.json';
 import uk from './locales/uk.json';
 import pl from './locales/pl.json';
 import bg from './locales/bg.json';
+import it from './locales/it.json';
 
 const resources = {
   en: { translation: en },
@@ -32,6 +33,7 @@ const resources = {
   uk: { translation: uk },
   pl: { translation: pl },
   bg: { translation: bg },
+  it: { translation: it },
 };
 
 const languageDetector = {

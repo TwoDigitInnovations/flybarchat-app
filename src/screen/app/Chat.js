@@ -94,8 +94,8 @@ const getConnectionList = (keywor) => {
           <SearchIcon height={20} width={20} style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
-            placeholder="Search"
-            placeholderTextColor="#8a8a8a"
+            placeholder={t("Search")}
+            placeholderTextColor={Constants.greish_pink}
             value={searchQuery}
             onChangeText={(name)=>{
               getConnectionList(name), setSearchQuery(name);
@@ -123,7 +123,7 @@ const getConnectionList = (keywor) => {
             }}>
             <Text
               style={{
-                color: Constants.white,
+                color: Constants.black,
                 fontSize: 16,
                 fontFamily: FONTS.Medium,
               }}>
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerTitle: {
-    color: Constants.white,
+    color: Constants.black,
     fontSize: 18,
     fontFamily:FONTS.SemiBold,
   },
@@ -177,8 +177,9 @@ const styles = StyleSheet.create({
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#D9D9D91A',
-    borderRadius: 12,
+    borderColor: '#93025F87',
+    borderWidth: 1,
+    borderRadius: 28,
     paddingHorizontal: 15,
     height: 50,
   },
@@ -187,7 +188,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    color: Constants.white,
+    color: Constants.black,
     fontSize: 16,
     paddingVertical: 10,
     fontFamily:FONTS.Medium
@@ -197,7 +198,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   sectionTitle: {
-    color: Constants.white,
+    color: Constants.black,
     fontSize: 18,
     fontFamily:FONTS.SemiBold,
     marginBottom: 20,
@@ -239,7 +240,7 @@ const styles = StyleSheet.create({
     borderColor: Constants.light_black,
   },
   unreadCount: {
-    color: Constants.white,
+    color: Constants.black,
     fontSize: 12,
     fontFamily:FONTS.SemiBold,
   },
@@ -248,20 +249,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   chatName: {
-    color: Constants.white,
+    color: Constants.dark_black,
     fontSize: 16,
     fontFamily:FONTS.SemiBold,
     marginBottom: 4,
   },
   chatMessage: {
-    color: Constants.customgrey3,
+    color: Constants.dark_black,
     fontSize: 14,
     fontFamily:FONTS.Regular,
   },
   chatTime: {
-    color: Constants.customgrey3,
+    color: '#11141A',
     fontSize: 12,
-    fontFamily:FONTS.SemiBold,
+    fontFamily:FONTS.Regular,
   },
   separator: {
     height: 1,

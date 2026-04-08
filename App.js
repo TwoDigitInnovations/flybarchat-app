@@ -92,10 +92,17 @@ const App = () => {
             if (Platform.OS === 'android') {
                 _refreshAndRegisterFcmToken();
             }
-            
+
             // Register socket presence
             if (user?._id && socket.connected) {
                 socket.emit('user-online', { userId: user._id, name: user.name });
+            }
+
+            // Check for a pending call (user pressed Answer on notification while app
+            // was killed).  MUST run here — after checkLogin() calls reset('App') —
+            // otherwise reset() wipes the VideoCall screen off the stack.
+            if (Platform.OS === 'android') {
+                _checkNativePendingCall();
             }
         });
         _initPushServices();
@@ -132,12 +139,20 @@ const App = () => {
     socket.on('incoming-call', ({ callerName, callerId, roomId }) => {
     console.log('[App] Incoming call from:', callerName);
     
-    // ✅ Cancel any old notifications first
+    // Stop any native RingtoneService that may have started simultaneously
+    // (race condition: FCM and socket can both fire when app wakes)
+    try {
+        const { NativeModules } = require('react-native');
+        NativeModules.IncomingCall?.stopRingtone();
+    } catch(e) {}
+
+    // Cancel any native notification too
     try {
         const notifee = require('@notifee/react-native').default;
         notifee.cancelAllNotifications();
     } catch(e) {}
     
+    // JS layer plays its own ringtone for the IncomingCallScreen overlay
     InCallManager.startRingtone('_BUNDLE_');
     setIncomingCall({ callerName, callerId, roomId });
 });
@@ -174,13 +189,13 @@ const App = () => {
     try {
       const notifee = require('@notifee/react-native').default;
       const { AndroidImportance } = require('@notifee/react-native');
+      // Silent channel — RingtoneService handles all audio/vibration
       await notifee.createChannel({
-        id: 'incoming_call_v3',
+        id: 'incoming_call_silent',
         name: 'Incoming Calls',
         importance: AndroidImportance.HIGH,
-        sound: 'ringtone',
-        vibration: true,
-        vibrationPattern: [500, 500, 500, 500],
+        sound: '',
+        vibration: false,
       });
       console.log('[App] Call notification channel created');
     } catch (err) {
@@ -198,15 +213,17 @@ const App = () => {
     OneSignal.Notifications.requestPermission(true);
 
     // Suppress OneSignal banner when app is open — socket handles it
+    // Suppress ALL OneSignal notifications for incoming calls — always.
+    // OneSignal intercepts FCM and would show a blank notification.
+    // Socket handles foreground calls, native service handles background/killed.
     OneSignal.Notifications.addEventListener('foregroundWillDisplay', (event) => {
-  const data = event.notification.additionalData;
-  // Suppress ALL incoming_call OneSignal notifications always
-  if (data?.type === 'incoming_call') {
-    event.preventDefault(); // Don't show OneSignal's notification
-    return;
-  }
-  event.notification.display();
-});
+        const data = event.notification.additionalData;
+        if (data?.type === 'incoming_call') {
+            event.preventDefault();
+            return;
+        }
+        event.notification.display();
+    });
 
     // ── 2. Firebase FCM (Android killed-app wakeup) ─────────────────────────
     if (Platform.OS !== 'android') return;
@@ -249,9 +266,21 @@ const { EventType } = require('@notifee/react-native');
     notifee.getInitialNotification().then((initial) => {
     if (!initial) return;
     const data = initial?.notification?.data;
-    console.log('[App] Notifee initial:', data);
-    
+    console.log('[App] Notifee initial:', data, 'pressAction:', initial?.pressAction?.id);
+
     if (data?.type === 'incoming_call') {
+        // If user pressed the Answer action button, IncomingCallModule.answer() already
+        // opened MainActivity with extras — _checkNativePendingCall() will navigate
+        // directly to VideoCall.  Do NOT show IncomingCallScreen here.
+        if (initial?.pressAction?.id === 'answer') return;
+
+        // For body-tap (pressAction.id === 'default') — show IncomingCallScreen.
+        // Stop native ringtone first so it doesn't overlap with InCallManager ringtone.
+        try {
+            const { NativeModules } = require('react-native');
+            NativeModules.IncomingCall?.stopRingtone?.();
+        } catch (e) {}
+
         const tryNavigate = (attempts = 0) => {
             const user = store.getState().auth.user;
             if (user?._id) {
@@ -302,9 +331,6 @@ notifee.onForegroundEvent(({ type, detail }) => {
     }
 });
 
-    // ── Opened from CallActivity Answer button ────────────────────────────
-    // Check immediately AND keep retrying — don't clear store until navigated
-    _checkNativePendingCall();
   };
 
   // Check if user answered from CallActivity — retry until navigation is ready
@@ -448,7 +474,7 @@ notifee.onForegroundEvent(({ type, detail }) => {
             ? ['left', 'top', 'right']
             : ['bottom', 'left', 'right', 'top']
         }style={styles.container}>
-        <StatusBar barStyle="light-content" backgroundColor={Constants.light_black} />
+        <StatusBar barStyle="dark-content" backgroundColor={Constants.light_black} />
         {/* <NetError /> */}
         <Spinner />
         <Navigation />
@@ -459,7 +485,12 @@ notifee.onForegroundEvent(({ type, detail }) => {
                     roomId={incomingCall.roomId}
                     onAnswer={() => {
                         InCallManager.stopRingtone();
-                        cancelCallNotification()
+                        cancelCallNotification();
+                        // Stop native ringtone in case it started
+                        try {
+                            const { NativeModules } = require('react-native');
+                            NativeModules.IncomingCall?.stopRingtone();
+                        } catch(e) {}
                         const user = store.getState().auth.user;
                         setIncomingCall(null);
                         navigate('VideoCall', {
@@ -472,7 +503,12 @@ notifee.onForegroundEvent(({ type, detail }) => {
                     }}
                     onDecline={() => {
                         InCallManager.stopRingtone();
-                        cancelCallNotification()
+                        cancelCallNotification();
+                        // Stop native ringtone in case it started
+                        try {
+                            const { NativeModules } = require('react-native');
+                            NativeModules.IncomingCall?.stopRingtone();
+                        } catch(e) {}
                         socket.emit('call-declined', { roomId: incomingCall.roomId });
                         setIncomingCall(null);
                     }}

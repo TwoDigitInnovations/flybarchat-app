@@ -187,7 +187,7 @@ const zodiac = getZodiacSign(day, month);
       keyboardShouldPersistTaps="always">
       <View style={{flexDirection: 'row', gap:20}}>
        {/* <TouchableOpacity style={styles.backcov} onPress={() => goBack()}> */}
-               <BackIcon  onPress={() => goBack()}/>
+               <BackIcon  onPress={() => goBack()} color={Constants.black}/>
                  {/* </TouchableOpacity> */}
         <Text style={styles.headtxt}>{t("Personal Data")}</Text>
         <View></View>
@@ -218,7 +218,7 @@ const zodiac = getZodiacSign(day, month);
           placeholder="Enter Name"
           value={userDetail?.name}
           onChangeText={name => setUserDetail({...userDetail, name})}
-          placeholderTextColor={Constants.customgrey2}
+          placeholderTextColor={Constants.greish_pink}
         />
       {submitted && !userDetail.name && (
         <Text style={styles.require}>{t("Name is required")}</Text>
@@ -230,7 +230,7 @@ const zodiac = getZodiacSign(day, month);
           placeholder={t("Enter Email")}
           value={userDetail?.email}
           onChangeText={email => setUserDetail({...userDetail, email})}
-          placeholderTextColor={Constants.customgrey2}
+          placeholderTextColor={Constants.greish_pink}
         />
         {submitted && !userDetail.email && (
         <Text style={styles.require}>{t("Email is required")}</Text>
@@ -262,6 +262,7 @@ const zodiac = getZodiacSign(day, month);
           itemTextStyle={styles.itemText}
           itemContainerStyle={styles.itemContainerStyle}
           selectedItemStyle={styles.selectedStyle}
+          iconColor={Constants.black}
         />
 
         {submitted && !userDetail.gender && (
@@ -275,7 +276,7 @@ const zodiac = getZodiacSign(day, month);
           placeholder={t("Enter Number")}
           value={userDetail?.phone}
           onChangeText={phone => setUserDetail({...userDetail, phone})}
-          placeholderTextColor={Constants.customgrey2}
+          placeholderTextColor={Constants.greish_pink}
         />
       {submitted && !userDetail.phone && (
         <Text style={styles.require}>{t("Number is required")}</Text>
@@ -287,13 +288,13 @@ const zodiac = getZodiacSign(day, month);
           placeholder={t("Enter Profession")}
           value={userDetail?.profession}
           onChangeText={profession => setUserDetail({...userDetail, profession})}
-          placeholderTextColor={Constants.customgrey2}
+          placeholderTextColor={Constants.greish_pink}
         />
       {submitted && !userDetail.profession && (
         <Text style={styles.require}>{t("Profession is required")}</Text>
       )}
         <Text style={styles.label}>{t("Date of Birth")}</Text>
-        <Text style={[styles.input2,{color:userDetail?.dob?Constants.white:Constants.customgrey2}]} onPress={() => setDateModel(true)}>{userDetail?.dob ? moment(userDetail?.dob).format('DD MMM YYYY') : t("Select Date")}</Text>
+        <Text style={[styles.input2,{color:userDetail?.dob?Constants.black:Constants.greish_pink}]} onPress={() => setDateModel(true)}>{userDetail?.dob ? moment(userDetail?.dob).format('DD MMM YYYY') : t("Select Date")}</Text>
       {submitted && !userDetail.dob && (
         <Text style={styles.require}>{t("Date of Birth is required")}</Text>
       )}
@@ -315,7 +316,7 @@ const zodiac = getZodiacSign(day, month);
           placeholder={t("Enter Country")}
           value={userDetail?.country}
           onChangeText={country => setUserDetail({...userDetail, country})}
-          placeholderTextColor={Constants.customgrey2}
+          placeholderTextColor={Constants.greish_pink}
         />
       {submitted && !userDetail.country && (
         <Text style={styles.require}>{t("Country is required")}</Text>
@@ -329,7 +330,7 @@ const zodiac = getZodiacSign(day, month);
           placeholder={t("Enter City")}
           value={userDetail?.city}
           onChangeText={city => setUserDetail({...userDetail, city})}
-          placeholderTextColor={Constants.customgrey2}
+          placeholderTextColor={Constants.greish_pink}
         />
       {submitted && !userDetail.city && (
         <Text style={styles.require}>{t("City is required")}</Text>
@@ -347,7 +348,7 @@ const zodiac = getZodiacSign(day, month);
           keyboardType='number-pad'
           value={userDetail?.height}
           onChangeText={height => setUserDetail({...userDetail, height})}
-          placeholderTextColor={Constants.customgrey2}
+          placeholderTextColor={Constants.greish_pink}
         />
       {submitted && !userDetail.height && (
         <Text style={styles.require}>{t("Height is required")}</Text>
@@ -381,6 +382,7 @@ const zodiac = getZodiacSign(day, month);
           itemTextStyle={styles.itemText}
           itemContainerStyle={styles.itemContainerStyle}
           selectedItemStyle={styles.selectedStyle}
+          iconColor={Constants.black}
         />
 
       {submitted && !userDetail.height_unit && (
@@ -415,6 +417,7 @@ const zodiac = getZodiacSign(day, month);
           itemTextStyle={styles.itemText}
           itemContainerStyle={styles.itemContainerStyle}
           selectedItemStyle={styles.selectedStyle}
+          iconColor={Constants.black}
         />
         {submitted && !userDetail.eyeColor && (
         <Text style={styles.require}>{t("Eye Colour is required")}</Text>
@@ -446,6 +449,7 @@ const zodiac = getZodiacSign(day, month);
           itemTextStyle={styles.itemText}
           itemContainerStyle={styles.itemContainerStyle}
           selectedItemStyle={styles.selectedStyle}
+          iconColor={Constants.black}
         />
         {submitted && !userDetail.hairColor && (
         <Text style={styles.require}>{t("Hair Colour is required")}</Text>
@@ -476,6 +480,7 @@ const zodiac = getZodiacSign(day, month);
           itemTextStyle={styles.itemText}
           itemContainerStyle={styles.itemContainerStyle}
           selectedItemStyle={styles.selectedStyle}
+          iconColor={Constants.black}
         />
         {submitted && !userDetail.relationship_status && (
         <Text style={styles.require}>{t("Relationship Status is required")}</Text>
@@ -507,6 +512,7 @@ const zodiac = getZodiacSign(day, month);
           itemTextStyle={styles.itemText}
           itemContainerStyle={styles.itemContainerStyle}
           selectedItemStyle={styles.selectedStyle}
+          iconColor={Constants.black}
         />
         {submitted && !userDetail.looking_for && (
         <Text style={styles.require}>{t("Looking For is required")}</Text>
@@ -538,6 +544,7 @@ const zodiac = getZodiacSign(day, month);
           itemTextStyle={styles.itemText}
           itemContainerStyle={styles.itemContainerStyle}
           selectedItemStyle={styles.selectedStyle}
+          iconColor={Constants.black}
         />
 
       {submitted && !userDetail.age_range && (
@@ -615,28 +622,30 @@ const styles = StyleSheet.create({
     // marginTop: 20,
   },
   label: {
-    color: Constants.customgrey3,
+    color: Constants.greish_pink,
     fontSize: 14,
     marginVertical: 10,
     fontFamily:FONTS.Medium,
   },
   input: {
-    backgroundColor: '#111822',
+    backgroundColor: Constants.light_pink,
     borderWidth: 1.5,
-    borderColor: '#475467',
+    borderColor: Constants.light_pink2,
     borderRadius: 12,
     height: 55,
-    color: '#ffffff',
+    color: Constants.black,
+    fontFamily:FONTS.Medium,
     fontSize: 16,
     paddingHorizontal:10,
   },
   input2: {
-    backgroundColor: '#111822',
+    backgroundColor: Constants.light_pink,
     borderWidth: 1.5,
-    borderColor: '#475467',
+    borderColor: Constants.light_pink2,
     borderRadius: 12,
     padding: 15,
-    color: '#ffffff',
+    color: Constants.black,
+    fontFamily:FONTS.Medium,
     fontSize: 16,
     paddingHorizontal:10,
     lineHeight:25
@@ -657,7 +666,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.Medium,
   },
   headtxt: {
-    color: Constants.white,
+    color: Constants.black,
     fontSize: 16,
     fontFamily: FONTS.SemiBold,
   },
@@ -690,12 +699,12 @@ const styles = StyleSheet.create({
     backgroundColor: Constants.custom_red,
   },
   placeholder: {
-    color: Constants.customgrey2,
+    color: Constants.greish_pink,
     fontSize: 14,
     fontFamily: FONTS.Medium,
   },
   selectedText: {
-    color: Constants.white,
+    color: Constants.black,
     fontSize: 14,
     fontFamily: FONTS.Medium,
   },
@@ -707,10 +716,10 @@ const styles = StyleSheet.create({
   dropdown: {
     height: 50,
     borderWidth: 1,
-    borderColor: '#475467',
+    borderColor: Constants.light_pink2,
     borderRadius: 10,
     paddingHorizontal: 7,
-    backgroundColor: '#111822',
+    backgroundColor: Constants.light_pink,
   },
   frw:{
     flexDirection:'row',

@@ -18,7 +18,7 @@ import { Formik, useFormik } from 'formik';
 // import { OneSignal } from 'react-native-onesignal';
 import { useDispatch } from 'react-redux';
 import { login } from '../../../redux/auth/authAction';
-import { BackIcon } from '../../Assets/theme';
+import { BackIcon, EyeCloseIcon, EyeIcon } from '../../Assets/theme';
 import { useTranslation } from 'react-i18next';
 
 const SignIn = () => {
@@ -83,7 +83,7 @@ const SignIn = () => {
           style={styles.backButton}
           onPress={() => goBack()}
         >
-          <BackIcon width={24} height={24} />
+          <BackIcon width={24} height={24} color={Constants.black}/>
         </TouchableOpacity>
       </View>
 <KeyboardAvoidingView
@@ -106,7 +106,7 @@ const SignIn = () => {
             style={styles.input}
             placeholder={t("Enter Email")}
             textAlign="left"
-            placeholderTextColor={Constants.customgrey2}
+            placeholderTextColor={Constants.greish_pink}
             value={formik.values.email}
             onChangeText={formik.handleChange('email')}
             onBlur={formik.handleBlur('email')}
@@ -121,7 +121,7 @@ const SignIn = () => {
               style={styles.passwordInput}
               placeholder={t("Enter Password")}
               secureTextEntry={showPass}
-              placeholderTextColor={Constants.customgrey2}
+              placeholderTextColor={Constants.greish_pink}
               value={formik.values.password}
               onChangeText={formik.handleChange('password')}
               onBlur={formik.handleBlur('password')}
@@ -133,15 +133,8 @@ const SignIn = () => {
               }}
               style={styles.eyeIcon}
             >
-              <Image
-                source={
-                  showPass
-                    ? require('../../Assets/Images/eye-1.png')
-                    : require('../../Assets/Images/eye.png')
-                }
-                style={{ height: 28, width: 28 }}
-                resizeMode="contain"
-              />
+              {showPass ? <EyeIcon width={28} height={28} /> :
+                              <EyeCloseIcon width={28} height={28} />}
             </TouchableOpacity>
           </View>
           {formik.touched.password && formik.errors.password && (

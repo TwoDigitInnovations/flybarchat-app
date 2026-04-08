@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-feature android:name="android.hardware.camera" />
@@ -29,15 +30,16 @@
       android:theme="@style/AppTheme"
       android:usesCleartextTraffic="${usesCleartextTraffic}"
       android:supportsRtl="true">
+
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
         android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
         android:launchMode="singleTask"
         android:windowSoftInputMode="adjustResize"
-    android:showWhenLocked="true"
-    android:turnScreenOn="true"
-    android:showOnLockScreen="true"
+        android:showWhenLocked="true"
+        android:turnScreenOn="true"
+        android:showOnLockScreen="true"
         android:exported="true">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
@@ -45,49 +47,49 @@
         </intent-filter>
       </activity>
 
-      <!-- Full-screen incoming call UI — pure native, no React needed -->
-    <!-- Launched via setFullScreenIntent() from FlayChatBarFirebaseMessagingService -->
-    <activity
-      android:name=".CallActivity"
-      android:label="Incoming Call"
-      android:launchMode="singleInstance"
-      android:showOnLockScreen="true"
-      android:turnScreenOn="true"
-      android:showWhenLocked="true"
-      android:excludeFromRecents="true"
-      android:exported="true"
-      android:screenOrientation="portrait"
-      android:theme="@style/AppTheme" />
+      <!-- Full-screen incoming call UI — launched by Notifee fullScreenAction -->
+      <activity
+        android:name=".CallActivity"
+        android:label="Incoming Call"
+        android:launchMode="singleInstance"
+        android:showOnLockScreen="true"
+        android:turnScreenOn="true"
+        android:showWhenLocked="true"
+        android:excludeFromRecents="true"
+        android:exported="true"
+        android:screenOrientation="portrait"
+        android:theme="@style/AppTheme" />
 
-    <!-- Custom FCM service — data-only messages call onMessageReceived even when killed -->
-    <service
-      android:name=".FlayChatBarFirebaseMessagingService"
-      android:exported="false">
-      <intent-filter>
-        <action android:name="com.google.firebase.MESSAGING_EVENT" />
-      </intent-filter>
-    </service>
+      <!-- Native FCM service — only needed for foreground socket handling -->
+      <!-- Background/killed: JS setBackgroundMessageHandler handles it -->
+      <service
+        android:name=".FlayChatBarFirebaseMessagingService"
+        android:exported="false">
+        <intent-filter>
+          <action android:name="com.google.firebase.MESSAGING_EVENT" />
+        </intent-filter>
+      </service>
 
-    <!-- Loops ringtone + vibration for incoming calls -->
-    <service
-      android:name=".RingtoneService"
-      android:exported="false"
-      android:foregroundServiceType="mediaPlayback" />
+      <!-- Loops ringtone + vibration -->
+      <service
+        android:name=".RingtoneService"
+        android:exported="false"
+        android:foregroundServiceType="mediaPlayback" />
 
-    <!-- Decline button receiver -->
-    <receiver
-      android:name=".DeclineReceiver"
-      android:exported="false" />
+      <!-- Decline button receiver -->
+      <receiver
+        android:name=".DeclineReceiver"
+        android:exported="false" />
 
-    <!-- FCM default icon -->
-    <meta-data
-      android:name="com.google.firebase.messaging.default_notification_icon"
-      android:resource="@mipmap/ic_launcher" />
+      <!-- FCM default icon -->
+      <meta-data
+        android:name="com.google.firebase.messaging.default_notification_icon"
+        android:resource="@mipmap/ic_launcher" />
 
-    <!-- Notifee foreground service -->
-    <service
-      android:name="app.notifee.core.ForegroundService"
-      android:exported="false" />
+      <!-- Notifee foreground service -->
+      <service
+        android:name="app.notifee.core.ForegroundService"
+        android:exported="false" />
 
     </application>
 </manifest>

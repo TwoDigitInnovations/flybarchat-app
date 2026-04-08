@@ -12,57 +12,10 @@ import {
 } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { getBannerOffer } from '../../../redux/Menu/menuAction';
-import { Back2Icon, MocktailIcon } from '../../Assets/theme';
+import { Back2Icon, ButtonIcon, Camera2Icon, MenuButtonIcon, MocktailIcon } from '../../Assets/theme';
 import Constants, { Currency, FONTS } from '../../Assets/Helpers/constant';
 import { goBack, navigate } from '../../../utils/navigationRef';
 import { useTranslation } from 'react-i18next';
-
-const { width } = Dimensions.get('window');
-
-const offers = [
-  {
-    id: 'christmas',
-    title: 'Christmas Offer!',
-    titleColor: '#FF4444',
-    subtitle: 'Limited Time ONLY',
-    originalPrice: '$2',
-    discountPrice: '$1.50',
-    label: 'Only Today',
-    gradient: ['#1a472a', '#2d6a4f'],
-    accentColor: '#FF4444',
-    emoji: '🎄',
-    decorEmoji: '🎅',
-    bg: '#1a2f1a',
-  },
-  {
-    id: 'easter',
-    title: 'Easter Offer!',
-    titleColor: '#FFD700',
-    subtitle: 'Limited Time ONLY',
-    originalPrice: '$2',
-    discountPrice: '$1.50',
-    label: 'Only Today',
-    gradient: ['#2d4a1e', '#3d6b2a'],
-    accentColor: '#FFD700',
-    emoji: '🐣',
-    decorEmoji: '🕊️',
-    bg: '#1e2d1e',
-  },
-  {
-    id: 'august',
-    title: 'August 15 Offer!',
-    titleColor: '#FF6B35',
-    subtitle: 'Limited Time ONLY',
-    originalPrice: '$2',
-    discountPrice: '$1.50',
-    label: 'Only Today',
-    gradient: ['#2a1f0e', '#4a3520'],
-    accentColor: '#FF6B35',
-    emoji: '🏖️',
-    decorEmoji: '🍹',
-    bg: '#2a1f0e',
-  },
-];
 
 const OfferCard = ({ offer, index }) => {
   const slideAnim = useRef(new Animated.Value(60)).current;
@@ -111,43 +64,6 @@ const OfferCard = ({ offer, index }) => {
         },
       ]}
     >
-      {/* <View style={[styles.card, { backgroundColor: offer.bg }]}>
-        <View style={[styles.blob, styles.blobLeft, { backgroundColor: offer.accentColor + '22' }]} />
-        <View style={[styles.blob, styles.blobRight, { backgroundColor: offer.accentColor + '15' }]} />
-
-        <Text style={styles.decorEmoji}>{offer.decorEmoji}</Text>
-
-        <View style={styles.cardContent}>
-          <View style={styles.cardLeft}>
-            <Text style={styles.bigEmoji}>{offer.emoji}</Text>
-          </View>
-
-          <View style={styles.cardRight}>
-            <View style={styles.titleRow}>
-              <Text style={[styles.offerTitle, { color: offer.titleColor }]}>
-                {offer.title}
-              </Text>
-            </View>
-
-            <Text style={styles.subtitle}>{offer.subtitle}</Text>
-
-            <Animated.View style={[styles.priceBadge, { transform: [{ scale: pulseAnim }] }]}>
-              <Text style={styles.discountPrice}>{offer.discountPrice}</Text>
-              <Text style={styles.priceLabel}>{offer.label}</Text>
-              <Text style={styles.originalPrice}>{offer.originalPrice}</Text>
-            </Animated.View>
-
-            <TouchableOpacity
-              style={[styles.buyButton, { borderColor: offer.accentColor }]}
-              activeOpacity={0.8}
-            >
-              <Text style={[styles.buyButtonText, { color: offer.accentColor }]}>
-                Buy Menu!
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View> */}
       <View style={[styles.card, { backgroundColor: offer.bg }]}>
       <Image source={{uri:offer?.image}} style={styles.cardimg} resizeMode='stretch'/>
       </View>
@@ -194,7 +110,6 @@ export default function Banner() {
     }
   return (
     <View style={styles.safeArea}>
-      <View style={styles.container}>
 
         {/* Header */}
         <Animated.View
@@ -217,11 +132,12 @@ export default function Banner() {
           <Text style={styles.headerSub}>{t("To access video calls, you must buy the menu!")}</Text>
 
           {/* Menu Badge */}
-          <TouchableOpacity onPress={()=>navigate('Menu')}>
+          {/* <TouchableOpacity onPress={()=>navigate('Menu')}>
           <Animated.View style={[styles.menuBadge, { transform: [{ scale: badgeScale }] }]}>
-            <Text style={styles.menuBadgeText}>{t("MENU")}  🎥  {Currency}2</Text>
+            <Text style={styles.menuBadgeText}>{t("MENU")} <Camera2Icon height={20} width={20} style={{ marginTop: 5 }}/> {Currency}2</Text>
           </Animated.View>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+          <MenuButtonIcon height={45} width={190} onPress={()=>navigate('Menu')}/>
 
           {/* Holiday Banner */}
           <View style={styles.holidayBanner}>
@@ -254,14 +170,13 @@ export default function Banner() {
           <Text style={styles.maybeLaterText}>{t("Maybe later")}</Text>
         </TouchableOpacity>
       </View>
-    </View>
   );
 }
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#0d0d0d',
+    backgroundColor: Constants.light_black,
   },
   container: {
     flex: 1,
@@ -278,31 +193,33 @@ const styles = StyleSheet.create({
   appName: {
     fontSize: 20,
     fontFamily:FONTS.Bold,
-    color: Constants.white,
+    color: Constants.black,
     letterSpacing: 2,
     textTransform: 'uppercase',
     marginBottom: 6,
   },
   headerSub: {
     fontSize: 12,
-    color: Constants.customgrey3,
-    fontFamily:FONTS.Regular,
+    color: Constants.black,
+    fontFamily:FONTS.Medium,
     textAlign: 'center',
     marginBottom: 14,
     lineHeight: 18,
   },
   menuBadge: {
-    backgroundColor: '#FECD2B',
+    backgroundColor: Constants.custom_red,
     paddingHorizontal: 28,
     paddingVertical: 10,
     borderRadius: 8,
     marginBottom: 16,
+    alignSelf:"center"
   },
   menuBadgeText: {
-    color: Constants.black,
+    color: Constants.white,
     fontFamily:FONTS.Bold,
     fontSize: 16,
     letterSpacing: 1.5,
+    alignItems:'center'
   },
   holidayBanner: {
     flexDirection: 'row',
@@ -311,14 +228,14 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   holidayText: {
-    color: Constants.white,
+    color: Constants.black,
     fontFamily:FONTS.SemiBold,
     fontSize: 14,
     textDecorationLine: 'underline',
     letterSpacing: 0.5,
   },
   arrow: {
-    color: Constants.white,
+    color: Constants.black,
     fontSize: 16,
     fontFamily:FONTS.SemiBold,
   },
@@ -335,11 +252,6 @@ const styles = StyleSheet.create({
     marginBottom: 14,
     borderRadius: 18,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.5,
-    shadowRadius: 12,
-    elevation: 10,
   },
 
   // Maybe Later
@@ -383,10 +295,11 @@ const styles = StyleSheet.create({
     width: 35,
     height: 35,
     borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    backgroundColor: Constants.light_pink,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
+    boxShadow: '0px 2px 4px 0.5px gray',
   },
   topcov:{
     flexDirection:'row',

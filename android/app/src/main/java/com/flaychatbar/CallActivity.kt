@@ -83,7 +83,9 @@ class CallActivity : AppCompatActivity() {
         PendingCallStore.roomId     = roomId
 
         buildUI(callerName)
-        // Ringtone/vibration handled by RingtoneService (started by FlayChatBarFirebaseMessagingService)
+        // Start ringtone here — single source of truth regardless of launch path
+        // (fullScreenAction from Notifee OR launchCallScreen from JS both reach onCreate)
+        RingtoneService.start(applicationContext)
     }
 
     private fun buildUI(callerName: String) {

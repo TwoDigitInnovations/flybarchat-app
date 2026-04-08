@@ -7,7 +7,7 @@ import Constants from '../../Assets/Helpers/constant';
 import { signup } from '../../../redux/auth/authAction';
 import { useDispatch } from 'react-redux';
 import { goBack, navigate } from '../../../utils/navigationRef';
-import { BackIcon, CheckboxIcon } from '../../Assets/theme';
+import { BackIcon, CheckboxIcon, EyeCloseIcon, EyeIcon } from '../../Assets/theme';
 import { useTranslation } from 'react-i18next';
 
 const SignUp = () => {
@@ -90,7 +90,7 @@ const SignUp = () => {
           style={styles.backButton}
           onPress={() => goBack()}
         >
-          <BackIcon width={24} height={24} />
+          <BackIcon width={24} height={24} color={Constants.black}/>
         </TouchableOpacity>
 
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -101,7 +101,7 @@ const SignUp = () => {
                 style={styles.input}
                 placeholder="Enter Full Name"
                 textAlign='left'
-                placeholderTextColor={Constants.customgrey2}
+                placeholderTextColor={Constants.greish_pink}
                 value={formik.values.name}
                 onChangeText={formik.handleChange('name')}
                 onBlur={formik.handleBlur('name')}
@@ -114,7 +114,7 @@ const SignUp = () => {
                 style={styles.input}
                 placeholder="Enter Email"
                 textAlign='left'
-                placeholderTextColor={Constants.customgrey2}
+                placeholderTextColor={Constants.greish_pink}
                 value={formik.values.email}
                 onChangeText={formik.handleChange('email')}
                 onBlur={formik.handleBlur('email')}
@@ -129,7 +129,7 @@ const SignUp = () => {
               style={styles.passwordInput}
                 placeholder="Enter Password"
                 secureTextEntry={showPass}
-                placeholderTextColor={Constants.customgrey2}
+                placeholderTextColor={Constants.greish_pink}
                 value={formik.values.password}
                 onChangeText={formik.handleChange('password')}
                 onBlur={formik.handleBlur('password')}
@@ -140,7 +140,7 @@ const SignUp = () => {
                   setShowPass(!showPass);
                 }}
                 style={styles.eyeIcon}>
-                <Image
+                {/* <Image
                   source={
                     showPass
                       ? require('../../Assets/Images/eye-1.png')
@@ -148,7 +148,9 @@ const SignUp = () => {
                   }
                   style={{ height: 28, width: 28 }}
                   resizeMode="contain"
-                />
+                /> */}
+                {showPass ? <EyeIcon width={28} height={28} /> :
+                <EyeCloseIcon width={28} height={28} />}
               </TouchableOpacity>
             </View>
             {formik.touched.password && formik.errors.password &&
@@ -202,7 +204,7 @@ const SignUp = () => {
           </ScrollView>
                 {!keyboardVisible &&<Text style={styles.textcov} onPress={()=>navigate('SignIn')}>
                   <Text style={styles.lasttxt}>Already have an account?</Text>
-                  <Text style={[styles.lasttxt,{color:Constants.custom_red,textDecorationLine:'underline'}]}>Sign In</Text>
+                  <Text style={[styles.lasttxt,{color:Constants.black,textDecorationLine:'underline'}]}>Sign In</Text>
                 </Text>}
           </KeyboardAvoidingView>
   )

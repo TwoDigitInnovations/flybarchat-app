@@ -55,6 +55,10 @@ const IncomingCallScreen = ({
     const declineAnim = useRef(new Animated.Value(1)).current;
 
     useEffect(() => {
+        // Stop native RingtoneService before starting JS ringtone to avoid overlap.
+        // RingtoneService may have been started by the FCM background handler;
+        // InCallManager now takes over for the in-app incoming call UI.
+        try { IncomingCall?.stopRingtone?.(); } catch (e) {}
         // Start ringtone
         InCallManager.startRingtone('_BUNDLE_');
 

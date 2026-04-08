@@ -101,7 +101,7 @@ dispatch(logout())
               <Text style={styles.protxt}>{t("Personal Data")}</Text>
             </View>
             <RightArrowIcon
-              color={Constants.white}
+              color={Constants.black}
               height={15}
               width={15}
               style={styles.aliself}
@@ -119,7 +119,7 @@ dispatch(logout())
               <Text style={styles.protxt}>{t("Privacy Policy")}</Text>
             </View>
             <RightArrowIcon
-              color={Constants.white}
+              color={Constants.black}
               height={15}
               width={15}
               style={styles.aliself}
@@ -136,7 +136,7 @@ dispatch(logout())
               <Text style={styles.protxt}>{t("Terms and Conditions")}</Text>
             </View>
             <RightArrowIcon
-              color={Constants.white}
+              color={Constants.black}
               height={15}
               width={15}
               style={styles.aliself}
@@ -155,7 +155,7 @@ dispatch(logout())
             <View style={styles.btmboxfirpart}>
               <Text style={styles.protxt3}>{selectedLang?.native}</Text>
             <RightArrowIcon
-              color={Constants.white}
+              color={Constants.black}
               height={15}
               width={15}
               style={styles.aliself}
@@ -174,7 +174,7 @@ dispatch(logout())
               <Text style={styles.protxt}>{t("Help Center")}</Text>
             </View>
             <RightArrowIcon
-              color={Constants.white}
+              color={Constants.black}
               height={15}
               width={15}
               style={styles.aliself}
@@ -190,7 +190,7 @@ dispatch(logout())
               <Text style={[styles.protxt,{width:'70%'}]}>{t("Request Account Deletion")}</Text>
             </View>
             <RightArrowIcon
-              color={Constants.white}
+              color={Constants.black}
               height={15}
               width={15}
               style={styles.aliself}
@@ -201,7 +201,7 @@ dispatch(logout())
             onPress={async () => {
               setModalVisible(true);
             }}>
-            <LogoutIcon color={Constants.red}/>
+            <LogoutIcon color={Constants.black}/>
             <Text style={styles.btntxt}>{t("Log Out")}</Text>
           </TouchableOpacity>
         </View>
@@ -222,7 +222,7 @@ dispatch(logout())
                 <View style={{width:35}}></View>
                 <Text style={styles.textStyle5}>{t("Sign Out")}</Text>
                 <TouchableOpacity style={styles.croscov} onPress={()=>setModalVisible(false)}>
-                  <CrossIcon color={Constants.white}/>
+                  <CrossIcon color={Constants.black}/>
                 </TouchableOpacity>
               </View>
               <Text style={styles.textStyle4}>{t("Are you sure you want to log out?")}</Text>
@@ -231,7 +231,7 @@ dispatch(logout())
                   activeOpacity={0.9}
                   onPress={() => setModalVisible(!modalVisible)}
                   style={styles.cancelButtonStyle2}>
-                  <Text style={styles.modalText}>{t("Cancel")}</Text>
+                  <Text style={[styles.modalText,{color:Constants.black}]}>{t("Cancel")}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   activeOpacity={0.9}
@@ -308,18 +308,18 @@ const styles = StyleSheet.create({
   },
   headtxt: {
     fontSize: 16,
-    color: Constants.white,
+    color: Constants.black,
     fontFamily: FONTS.SemiBold,
     textAlign: 'center',
     marginTop: 10,
   },
   protxt: {
-    color: Constants.white,
+    color: Constants.black,
     fontSize: 14,
     fontFamily: FONTS.SemiBold,
   },
   protxt2: {
-    color: Constants.customgrey2,
+    color: Constants.greish_pink,
     fontSize: 12,
     fontFamily: FONTS.Regular,
   },
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
   },
   btntxt: {
     fontSize: 16,
-    color: Constants.red,
+    color: Constants.black,
     fontFamily: FONTS.SemiBold,
   },
   btn: {
@@ -390,19 +390,19 @@ const styles = StyleSheet.create({
   },
 
   textStyle: {
-    color: Constants.white,
+    color: Constants.black,
     textAlign: 'center',
     fontFamily: FONTS.Bold,
     fontSize: 16,
   },
   textStyle5: {
-    color: Constants.white,
+    color: Constants.black,
     textAlign: 'center',
     fontFamily: FONTS.Bold,
     fontSize: 18,
   },
   textStyle4: {
-    color: Constants.customgrey2,
+    color: Constants.black,
     textAlign: 'center',
     fontFamily: FONTS.Medium,
     fontSize: 14,
@@ -415,7 +415,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   textStyle3: {
-    color: Constants.white,
+    color: Constants.black,
     textAlign: 'center',
     fontFamily: FONTS.Regular,
     fontSize: 16,
@@ -454,7 +454,7 @@ const styles = StyleSheet.create({
   },
   cancelButtonStyle2: {
     flex: 0.5,
-    borderColor: Constants.customgrey2,
+    borderColor: Constants.light_pink,
     borderWidth:1,
     borderRadius: 25,
     alignItems: 'center',
@@ -484,13 +484,13 @@ const styles = StyleSheet.create({
   },
   partheadtxt: {
     fontSize: 14,
-    color: Constants.customgrey2,
+    color: Constants.greish_pink,
     fontFamily: FONTS.Medium,
     marginTop: 20,
     marginLeft: 20,
   },
   iconcov: {
-    backgroundColor: Constants.customgrey,
+    backgroundColor: Constants.greish_pink,
     borderRadius: 8,
     padding: 10,
   },
@@ -498,7 +498,7 @@ const styles = StyleSheet.create({
     padding:10,
     borderRadius:8,
     borderWidth:1,
-    borderColor:Constants.customgrey5
+    borderColor:Constants.black
   },
   topcard: {
     marginHorizontal: 40,
@@ -508,7 +508,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   protxt3: {
-    color: Constants.white,
+    color: Constants.greish_pink,
     fontSize: 12,
     fontFamily: FONTS.Medium,
   },

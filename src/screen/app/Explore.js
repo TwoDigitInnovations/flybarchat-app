@@ -9,7 +9,7 @@ import {
   FlatList
 } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Back2Icon, ChatIcon, LocationIcon, NotificationIcon } from '../../Assets/theme'
+import { Back2Icon, Chat2Icon, } from '../../Assets/theme'
 import Constants, { FONTS } from '../../Assets/Helpers/constant'
 import { useDispatch, useSelector } from 'react-redux'
 import { getOnlineUsers } from '../../../redux/auth/authAction'
@@ -104,9 +104,9 @@ const Explore = ({ navigation }) => {
             <Text style={styles.onlineText}>{t("Online")}</Text>
           </View>
 
-          <View style={styles.chatIconButton}>
-          <ChatIcon height={18} width={18} />
-         </View>
+          {/* <View style={styles.chatIconButton}> */}
+          <Chat2Icon height={36} width={36} />
+         {/* </View> */}
           </View>
 
           <Text style={styles.userCardName}>{userData?.name}, {getAgeFromDOB(userData?.dob)}</Text>
@@ -144,14 +144,13 @@ const Explore = ({ navigation }) => {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Back2Icon height={24} width={24} />
+          <Back2Icon height={24} width={24} color={Constants.black} />
         </TouchableOpacity>
         
         <Text style={styles.headerTitle}>{t("Explore")}</Text>
         
-        <TouchableOpacity style={styles.notificationButton}>
-          <NotificationIcon height={24} width={24} />
-        </TouchableOpacity>
+          {/* <NotificationIcon height={45} width={45} /> */}
+          <View style={{ width: 45 }} />
       </View>
 
         {/* Section Title */}
@@ -197,26 +196,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerTitle: {
-    color: Constants.white,
+    color: Constants.black,
     fontSize: 18,
-    fontFamily:FONTS.SemiBold,
-  },
-  notificationButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
+    fontFamily:FONTS.Inter_SemiBold,
   },
   scrollView: {
     flex: 1,
   },
   sectionTitle: {
-    color: Constants.white,
+    color: Constants.black,
     fontSize: 16,
-    fontFamily:FONTS.SemiBold,
+    fontFamily:FONTS.Inter_Medium,
     paddingHorizontal: 20,
     marginBottom: 20,
   },

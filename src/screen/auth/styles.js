@@ -23,8 +23,8 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     fontSize: 24,
-    color: Constants.white,
-    fontFamily: FONTS.Medium,
+    color: Constants.black,
+    fontFamily: FONTS.Inter_SemiBold,
     marginBottom: 5,
   },
   titleRow: {
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: 28,
-    color: Constants.white,
+    color: Constants.black,
     fontFamily: FONTS.Bold,
   },
   forgtxt:{
@@ -65,13 +65,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: FONTS.SemiBold,
   },
+  registerButtonText2: {
+    color: Constants.black,
+    fontSize: 16,
+    fontFamily: FONTS.SemiBold,
+  },
   signInButton: {
     backgroundColor: 'transparent',
     paddingVertical: 14,
     borderRadius: 16,
     alignItems: 'center',
     borderWidth: 1.5,
-    borderColor: Constants.customgrey3,
+    borderColor: Constants.light_pink2,
   },
   mayBeLaterText: {
     color: '#6a6a6a',
@@ -89,10 +94,10 @@ header: {
   backButton: {
     width: 48,
     height: 48,
-    borderRadius: 14,
-    backgroundColor: '#111822',
+    borderRadius: 18,
+    // backgroundColor: '#111822',
     borderWidth: 1,
-    borderColor: '#475467',
+    borderColor: Constants.black,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -110,33 +115,35 @@ header: {
     flex: 1,
   },
   label: {
-    color: Constants.customgrey3,
+    color: Constants.greish_pink,
     fontSize: 14,
     marginVertical: 10,
     fontFamily:FONTS.Medium,
   },
   input: {
-    backgroundColor: 'transparent',
+    backgroundColor: Constants.light_pink,
     borderWidth: 1.5,
-    borderColor: '#2a2a2a',
+    borderColor: Constants.light_pink2,
     borderRadius: 12,
     height: 55,
-    color: '#ffffff',
+    color: Constants.black,
+    fontFamily: FONTS.Medium,
     fontSize: 16,
     paddingHorizontal:10,
   },
   passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'transparent',
+    backgroundColor: Constants.light_pink,
     borderWidth: 1.5,
-    borderColor: '#2a2a2a',
+    borderColor: Constants.light_pink2,
     borderRadius: 12,
     height: 55,
   },
   passwordInput: {
     flex: 1,
-    color: '#ffffff',
+    color: Constants.black,
+    fontFamily: FONTS.Medium,
     fontSize: 16,
     paddingHorizontal:10,
   },
@@ -177,7 +184,7 @@ header: {
   lasttxt:{
     fontSize:wp(3.5),
     fontFamily:FONTS.SemiBold,
-    color:Constants.white
+    color:Constants.greish_pink
   },
   require: {
     color: Constants.red,
@@ -195,13 +202,13 @@ header: {
      gap:10
   },
   pritermtxt:{
-    color:Constants.customgrey6,
+    color:Constants.greish_pink,
     fontSize:12,
     fontFamily:FONTS.Medium,
     width:'90%'
   },
   pritxtbol:{
-    color:Constants.white,
+    color:Constants.black,
     fontSize:12,
     fontFamily:FONTS.Bold,
   },

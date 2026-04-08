@@ -10,6 +10,7 @@ import {
   getProfile,
   getOnlineUsers,
   getCarouselData,
+  deductMenuBalence,
   logout
 } from './authAction';
 
@@ -25,6 +26,9 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    setCallUserDetail: (state, action) => {
+      state.callUserDetail = action.payload;
+    },
   },
   extraReducers: builder => {
     //login reducer
@@ -154,6 +158,20 @@ const authSlice = createSlice({
       state.error = action.payload;
     });
 
+    //deductMenuBalence reducer
+    builder.addCase(deductMenuBalence.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(deductMenuBalence.fulfilled, (state, action) => {
+      state.user = action.payload?.user;
+      state.isLoading = false;
+      state.error = null;
+    });
+    builder.addCase(deductMenuBalence.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    });
+
     builder.addCase(logout.fulfilled, (state, action) => {
       state.user = null;
       state.loginuser = null;
@@ -161,4 +179,7 @@ const authSlice = createSlice({
     });
   },
 });
+export const {
+  setCallUserDetail,
+} = authSlice.actions;
 export default authSlice.reducer;

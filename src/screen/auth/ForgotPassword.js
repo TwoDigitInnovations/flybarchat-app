@@ -21,7 +21,7 @@ import {
   verifyOtp,
 } from '../../../redux/auth/authAction';
 import { goBack } from '../../../utils/navigationRef';
-import { BackIcon } from '../../Assets/theme';
+import { BackIcon, EyeCloseIcon, EyeIcon } from '../../Assets/theme';
 import { useTranslation } from 'react-i18next';
 
 const ForgotPassword = () => {
@@ -130,7 +130,7 @@ const ForgotPassword = () => {
           <TouchableOpacity
           style={styles.backButton}
           onPress={() => goBack()}>
-          <BackIcon width={24} height={24} />
+          <BackIcon width={24} height={24} color={Constants.black}/>
         </TouchableOpacity>
             <ScrollView showsVerticalScrollIndicator={false} >
           <Text style={[styles.titleText,{marginTop:20}]}>
@@ -160,7 +160,7 @@ const ForgotPassword = () => {
                   style={styles.input}
                   placeholder={t("Enter Email")}
                   textAlign="left"
-                  placeholderTextColor={Constants.customgrey2}
+                  placeholderTextColor={Constants.greish_pink}
                   value={formikEmail.values.email}
                   onChangeText={formikEmail.handleChange('email')}
                   onBlur={formikEmail.handleBlur('email')}
@@ -177,7 +177,7 @@ const ForgotPassword = () => {
                 <TextInput
                   style={styles.input}
                   placeholder={t("Enter OTP")}
-                  placeholderTextColor={Constants.customgrey2}
+                  placeholderTextColor={Constants.greish_pink}
                   value={formikOtp.values.otp}
                   onChangeText={formikOtp.handleChange('otp')}
                   onBlur={formikOtp.handleBlur('otp')}
@@ -196,7 +196,7 @@ const ForgotPassword = () => {
                   style={styles.passwordInput}
                   placeholder={t("Enter Password")}
                   secureTextEntry={showPass}
-                  placeholderTextColor={Constants.customgrey2}
+                  placeholderTextColor={Constants.greish_pink}
                   value={formikPassword.values.password}
                   onChangeText={formikPassword.handleChange('password')}
                   onBlur={formikPassword.handleBlur('password')}
@@ -206,15 +206,8 @@ const ForgotPassword = () => {
                   onPress={() => {
                     setShowPass(!showPass);}}
                   style={styles.eyeIcon}>
-                  <Image
-                    source={
-                      showPass
-                        ? require('../../Assets/Images/eye-1.png')
-                        : require('../../Assets/Images/eye.png')
-                    }
-                    style={{ height: 28, width: 28 }}
-                    resizeMode="contain"
-                  />
+                  {showPass ? <EyeIcon width={28} height={28} /> :
+                                  <EyeCloseIcon width={28} height={28} />}
                 </TouchableOpacity>
               </View>
               {formikPassword.touched.password &&
@@ -229,7 +222,7 @@ const ForgotPassword = () => {
                   style={styles.passwordInput}
                   placeholder={t("Enter Confirm Password")}
                   secureTextEntry={showConfPass}
-                  placeholderTextColor={Constants.customgrey2}
+                  placeholderTextColor={Constants.greish_pink}
                   value={formikPassword.values.conformpassword}
                   onChangeText={formikPassword.handleChange('conformpassword')}
                   onBlur={formikPassword.handleBlur('conformpassword')}
@@ -241,15 +234,8 @@ const ForgotPassword = () => {
                   }}
                   style={styles.eyeIcon}
                 >
-                  <Image
-                    source={
-                      showConfPass
-                        ? require('../../Assets/Images/eye-1.png')
-                        : require('../../Assets/Images/eye.png')
-                    }
-                    style={{ height: 28, width: 28 }}
-                    resizeMode="contain"
-                  />
+                  {showConfPass ? <EyeIcon width={28} height={28} /> :
+                                  <EyeCloseIcon width={28} height={28} />}
                 </TouchableOpacity>
               </View>
               {formikPassword.touched.conformpassword &&

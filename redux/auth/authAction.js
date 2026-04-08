@@ -189,6 +189,23 @@ export const getCarouselData = createAsyncThunk(
   },
 );
 
+//For menu price deduct
+export const deductMenuBalence = createAsyncThunk(
+  'auth/deductBalence',
+  async (params, thunkAPI) => {
+    try {
+      const {data} = await axios.post(
+        'auth/deductBalence',
+        params,
+      );
+      return data;
+    } catch (error) {
+      showToaster('error',error);
+      return thunkAPI.rejectWithValue(error);
+    }
+  },
+);
+
 //For logout
 export const logout = createAsyncThunk(
   'auth/logout',

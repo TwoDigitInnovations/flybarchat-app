@@ -47,8 +47,12 @@ class RingtoneService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground(1002, buildSilentNotification())
-        startLoopingRingtone()
-        startVibration()
+        // Guard — if already playing (started from JS handler AND CallActivity both fire)
+        // do not create a second MediaPlayer instance
+        if (mediaPlayer == null) {
+            startLoopingRingtone()
+            startVibration()
+        }
         return START_STICKY
     }
 

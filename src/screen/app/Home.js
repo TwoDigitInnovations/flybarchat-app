@@ -98,16 +98,11 @@ dispatch(getOnlineUsers({page: 1, limit: 4})).unwrap()
           <View style={styles.userInfo}>
             <View style={styles.greetingRow}>
               <Text style={styles.hiText}>{t("Hi")}</Text>
-              <Text style={styles.heartEmoji}>❤️</Text>
-              <Text style={styles.heartEmoji}>💜</Text>
-              <Text style={styles.heartEmoji}>💙</Text>
             </View>
-            <Text style={styles.userName}>{user?.name}</Text>
+            <Text style={styles.userNameTop}>{user?.name}</Text>
           </View>
         </View>
-        <TouchableOpacity style={styles.notificationButton}>
-          <NotificationIcon height={22} width={22} />
-        </TouchableOpacity>
+          {/* <NotificationIcon height={45} width={45} /> */}
       </View>
 
       {/* App Title */}
@@ -220,25 +215,13 @@ const styles = StyleSheet.create({
   },
   hiText: {
     fontSize: 14,
-    color: Constants.white,
-    fontFamily:FONTS.Regular,
+    color: Constants.dark_black,
+    fontFamily:FONTS.Medium,
   },
-  heartEmoji: {
-    fontSize: 12,
-    marginLeft: 2,
-  },
-  userName: {
-    color: Constants.white,
+  userNameTop: {
+    color: Constants.dark_black,
     fontSize: 16,
     fontFamily:FONTS.SemiBold,
-  },
-  notificationButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   titleContainer: {
     flexDirection: 'row',
@@ -247,7 +230,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
   appTitle: {
-    color: Constants.white,
+    color: Constants.black,
     fontSize: 20,
     fontFamily:FONTS.SemiBold,
     letterSpacing: 1.5,
@@ -256,39 +239,42 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   welcomeCard: {
-    backgroundColor: '#D9D9D947',
-    marginHorizontal: 20,
+    backgroundColor: '#FFFFFF42',
+    width: '90%',
+    alignSelf:'center',
     padding: 20,
     borderRadius: 16,
     marginBottom: 20,
     justifyContent:'center',
-    alignItems:'center'
+    alignItems:'center',
+    boxShadow: '0px 2px 4px 0.5px gray',
   },
   welcomeTitle: {
-    color: Constants.white,
+    color: Constants.black,
     fontSize: 18,
-    fontFamily:FONTS.SemiBold,
+    fontFamily:FONTS.Inter_SemiBold,
     marginBottom: 8,
   },
   welcomeSubtitle: {
-    color: Constants.customgrey5,
+    color: Constants.black,
     fontSize: 12,
-    fontFamily:FONTS.Medium,
+    fontFamily:FONTS.Inter_Medium,
     lineHeight: 20,
     textAlign:'center'
   },
   startChatButton: {
-    backgroundColor: '#D9D9D947',
+    backgroundColor: '#FFFFFF42',
     marginHorizontal: 20,
     paddingVertical: 18,
     borderRadius: 12,
     alignItems: 'center',
     marginBottom: 30,
+    boxShadow: '0px 2px 4px 0.5px gray',
   },
   startChatText: {
-    color: Constants.white,
+    color: Constants.black,
     fontSize: 16,
-    fontFamily:FONTS.Medium,
+    fontFamily:FONTS.Inter_SemiBold,
   },
   onlineSection: {
     marginBottom: 30,
@@ -301,29 +287,30 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   onlineSectionTitle: {
-    color: Constants.white,
+    color: Constants.black,
     fontSize: 16,
-    fontFamily:FONTS.SemiBold,
+    fontFamily:FONTS.Inter_Medium,
   },
   viewAllButton: {
-    color: Constants.white,
+    color: Constants.black,
     fontSize: 14,
     fontFamily:FONTS.SemiBold,
     backgroundColor: Constants.white,
-    color: Constants.light_black,
     paddingHorizontal: 16,
     paddingVertical: 6,
     borderRadius: 20,
+    boxShadow: '0px 4px 4px 0px #0000001A',
   },
   onlineUsersContainer: {
-    backgroundColor: '#D9D9D947',
+    backgroundColor: '#FFFFFF42',
     paddingVertical: 15,
     borderRadius: 20,
     marginHorizontal: 20,
     marginBottom: 130,
+    boxShadow: '0px 2px 4px 0.5px gray',
   },
   usersList: {
-    paddingHorizontal: 15,
+    paddingHorizontal: 5,
   },
   userCard: {
     alignItems: 'center',
@@ -352,7 +339,7 @@ const styles = StyleSheet.create({
     borderColor: '#3a3a3a',
   },
   userName: {
-    color: Constants.white,
+    color: Constants.dark_black,
     fontSize: 12,
     fontFamily:FONTS.Medium,
   },
@@ -371,10 +358,10 @@ const styles = StyleSheet.create({
   },
   activeDot: {
     width: 8,
-    backgroundColor: Constants.white,
+    backgroundColor: Constants.black,
   },
   inactiveDot: {
     width: 8,
-    backgroundColor: Constants.customgrey3,
+    backgroundColor: Constants.greish_pink,
   },
 })

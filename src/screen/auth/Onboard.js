@@ -3,6 +3,7 @@ import styles from './styles';
 import { MocktailIcon } from '../../Assets/theme';
 import { navigate } from '../../../utils/navigationRef';
 import { useTranslation } from 'react-i18next';
+import Constants from '../../Assets/Helpers/constant';
 
 const Onboard = () => {
   const { t } = useTranslation();
@@ -22,17 +23,17 @@ const Onboard = () => {
         <Text style={styles.welcomeText}>{t("Welcome to the")}</Text>
         <View style={styles.titleRow}>
           <Text style={styles.titleText}>{t("FLAY CHAT BAR")} </Text>
-          <MocktailIcon width={35} height={35} />
+          <MocktailIcon width={35} height={35} colour={Constants.black}/>
         </View>
 
         {/* Buttons */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.registerButton} onPress={()=>navigate('SignUp')}>
-            <Text style={styles.registerButtonText}>{t("Register")}</Text>
+            <Text style={[styles.registerButtonText,{color: Constants.white}]}>{t("Register")}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.signInButton} onPress={()=>navigate('SignIn')}>
-            <Text style={styles.registerButtonText}>{t("Sign In")}</Text>
+            <Text style={styles.registerButtonText2}>{t("Sign In")}</Text>
           </TouchableOpacity>
 
           {/* <TouchableOpacity onPress={()=>navigate('App')}>

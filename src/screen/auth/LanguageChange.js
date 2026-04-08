@@ -63,7 +63,7 @@ const LanguageChange = () => {
         activeOpacity={0.75}
         style={[
           styles.langRow,
-          { backgroundColor: isSelected ? Constants.white : Constants.SURFACE },
+          { backgroundColor: isSelected ? Constants.white : null },
         ]}
         onPress={() => {
           setSelectLanguage(item.name);
@@ -72,7 +72,7 @@ const LanguageChange = () => {
         <View style={styles.flagCircle}>
           <Text style={styles.flagEmoji}>{item.flag}</Text>
         </View>
-        <Text style={[styles.langName, { color: isSelected ? Constants.black : Constants.white }]}>
+        <Text style={[styles.langName, { color: isSelected ? Constants.black : Constants.dark_black }]}>
           {item.native}
         </Text>
         <View style={[styles.radio, isSelected && styles.radioSelected]}>
@@ -91,20 +91,22 @@ const LanguageChange = () => {
       {/* ── Hero Banner — outside the scrollable/flex area ── */}
       <View style={styles.heroBanner}>
         <Image
-          source={require('../../Assets/Images/barImg2.png')}
+          source={require('../../Assets/Images/barImg.png')}
           style={styles.heroImg}
-          resizeMode="cover"
+          // resizeMode="cover"
         />
       </View>
+      <View style={styles.headerSpacer}>
 
       {/* ── Static header content — does NOT flex-grow ── */}
       <View style={styles.staticHeader}>
-        <View style={styles.appTitleRow}>
+        {/* <View style={styles.appTitleRow}>
           <Text style={styles.appTitle}>{t('FLAY CHAT BAR')} </Text>
           <MocktailIcon height={22} width={22} />
-        </View>
+        </View> */}
+        <Text style={styles.appTitle}>{t('Your Conversation,Your Language.')}</Text>
 
-        <Text style={styles.pageHeading}>{t('Select  the language')}</Text>
+        {/* <Text style={styles.pageHeading}>{t('Select  the language')}</Text> */}
         <Text style={styles.pageSubtitle}>
           {t('Select your preferred language below This helps us serve you better.')}
         </Text>
@@ -115,13 +117,13 @@ const LanguageChange = () => {
             <Text style={styles.flagEmojiLg}>{selectedItem?.flag}</Text>
           </View>
           <Text style={styles.selectedLangName}>{selectedItem?.native}</Text>
-          <View style={styles.checkCircle}>
-            <ThikIcon />
-          </View>
+            <ThikIcon height={28} width={28}/>
         </View>
 
         <Text style={styles.sectionLabel}>{t('All Languages')}</Text>
 
+      </View>
+      <View style={styles.listContainer}>
         <View style={styles.searchBox}>
           <SearchIcon height={20} width={20} />
           <TextInput
@@ -132,18 +134,18 @@ const LanguageChange = () => {
             onChangeText={setSearchQuery}
           />
         </View>
-      </View>
 
-      {/* ✅ FlatList gets ALL remaining vertical space via flex:1 */}
+      {/*FlatList gets ALL remaining vertical space via flex:1 */}
       <FlatList
         data={filteredData}
         keyExtractor={item => item.code}
         renderItem={renderItem}
         style={styles.list}
         showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"  // ✅ tap items without dismissing keyboard
+        keyboardShouldPersistTaps="handled"  // tap items without dismissing keyboard
         contentContainerStyle={styles.listContent}
       />
+      </View>
 
       {/* ── Continue Button ── */}
       <View style={styles.bottomBar}>
@@ -153,6 +155,7 @@ const LanguageChange = () => {
           onPress={handleContinue}>
           <Text style={styles.continueBtnText}>{t('Continue')}</Text>
         </TouchableOpacity>
+      </View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -167,12 +170,19 @@ const styles = StyleSheet.create({
   },
 
   heroBanner: {
-    height: 170,
+    height: '37%',
     overflow: 'hidden',
   },
   heroImg: {
     width: '100%',
     height: '100%',
+  },
+  headerSpacer:{
+    flex:1,
+    backgroundColor: Constants.light_black,
+    marginTop: -100,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
   },
 
   // ✅ Static header — no flex, just wraps its content
@@ -188,19 +198,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   appTitle: {
-    color: Constants.white,
-    fontSize: 18,
+    color: Constants.black,
+    fontSize: 22,
     fontFamily: FONTS?.Bold,
     letterSpacing: 1.5,
   },
   pageHeading: {
-    color: Constants.white,
+    color: Constants.black,
     fontSize: 18,
     fontFamily: FONTS?.SemiBold ,
     marginBottom: 6,
   },
   pageSubtitle: {
-    color: Constants.customgrey3,
+    color: Constants.black,
     fontSize: 14,
     fontFamily: FONTS?.Regular ,
     lineHeight: 18,
@@ -211,10 +221,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Constants.white,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: Constants.BORDER,
-    paddingHorizontal: 14,
+    borderRadius: 30,
+    // borderWidth: 1,
+    // borderColor: Constants.BORDER,
+    paddingHorizontal: 10,
     paddingVertical: 7,
     marginBottom: 18,
   },
@@ -222,7 +232,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: Constants.customgrey,
+    backgroundColor: Constants.light_pink,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 14,
@@ -235,30 +245,30 @@ const styles = StyleSheet.create({
     fontFamily: FONTS?.SemiBold,
   },
   sectionLabel: {
-    color: Constants.white,
-    fontSize: 14,
+    color: Constants.black,
+    fontSize: 16,
     fontFamily: FONTS?.SemiBold,
     marginBottom: 5,
   },
-  checkCircle: {
-    width: 28,
-    height: 28,
+  listContainer: { 
+    flex:1,
+    borderWidth:1,
+    borderColor: Constants.black,
     borderRadius: 14,
-    backgroundColor: Constants.custom_red,
-    alignItems: 'center',
-    justifyContent: 'center',
+    marginHorizontal: 20,
   },
 
   searchBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Constants.SURFACE,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: Constants.BORDER,
+    // backgroundColor: Constants.SURFACE,
+    // borderRadius: 12,
+    borderBottomWidth: 1,
+    borderColor: Constants.black,
     paddingHorizontal: 14,
-    marginBottom: 10,
+    // marginBottom: 10,
     height: 46,
+    // marginHorizontal:20
   },
   searchInput: {
     flex: 1,
@@ -271,7 +281,7 @@ const styles = StyleSheet.create({
   // ✅ FlatList takes all remaining space
   list: {
     flex: 1,
-    paddingHorizontal: 20,
+    // paddingHorizontal: 20,
   },
   listContent: {
     paddingBottom: 8,
@@ -280,19 +290,19 @@ const styles = StyleSheet.create({
   langRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Constants.SURFACE,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: Constants.BORDER,
-    paddingHorizontal: 14,
+    // backgroundColor: Constants.SURFACE,
+    // borderRadius: 12,
+    // borderWidth: 1,
+    // borderColor: Constants.BORDER,
+    paddingHorizontal: 10,
     paddingVertical: 10,
-    marginBottom: 8,
+    // marginBottom: 8,
   },
   flagCircle: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#2C2F38',
+    backgroundColor: Constants.light_pink2,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
@@ -309,7 +319,7 @@ const styles = StyleSheet.create({
     height: 22,
     borderRadius: 11,
     borderWidth: 1.5,
-    borderColor: Constants.BORDER,
+    borderColor: Constants.black,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -320,7 +330,7 @@ const styles = StyleSheet.create({
 
   bottomBar: {
     paddingHorizontal: 20,
-    paddingBottom: 10,
+    // paddingBottom: 10,
     paddingTop: 8,
   },
   continueBtn: {
