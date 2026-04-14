@@ -158,6 +158,7 @@ const Explore = ({ navigation }) => {
 
         <FlatList
         data={onlineUserList}
+        showsVerticalScrollIndicator={false}
         renderItem={({item, index}) => renderUserCard(item, index)}
         keyExtractor={(item) => item._id}
         numColumns={2}

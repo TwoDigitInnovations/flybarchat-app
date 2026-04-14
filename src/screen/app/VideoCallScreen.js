@@ -819,7 +819,7 @@ const VideoCallScreen = ({
             </SafeAreaView>
 
             {/* ── Draggable PiP — local video ── */}
-            {localStream  && remoteStream && (
+            {localStream  && (
                 <Animated.View
                     style={[S.pip, { transform: pipPos.getTranslateTransform() }]}
                     {...pipPanResponder.panHandlers}
@@ -896,7 +896,7 @@ const VideoCallScreen = ({
             )}
 
             {/* ── Small timer pill (visible during connected call, before overlay) ── */}
-            {true && (
+            {callStatus === 'connected' && !showTimeOverlay && (
                 <View style={S.timerPill}>
                     <Text style={S.timerPillText}>⏱ {mins}:{secs}</Text>
                 </View>
@@ -906,8 +906,8 @@ const VideoCallScreen = ({
                 TIME OVERLAY — matches the screenshot design exactly
                 Shows over the remote video (which is still playing behind)
             ════════════════════════════════════════════════════════════════ */}
-            {/* showTimeOverlay */}
-            {true && (
+
+            {showTimeOverlay && (
                 <View style={S.timeOverlayRoot}>
                     {/* Semi-transparent dark wash over the video */}
                     <View />

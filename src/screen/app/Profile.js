@@ -46,43 +46,53 @@ const Profile = (props) => {
   const dropdownRef5 = useRef();
   const dropdownRef6 = useRef();
   const dropdownRef7 = useRef();
+  const dropdownRef8 = useRef();
 
    const genderlist = [
-    { label: 'Men', value: 'Men' },
-    { label: 'Women', value: 'Women' },
-    { label: 'Other', value: 'Other' },
+    { label: t('Men'), value: 'Men' },
+    { label: t('Women'), value: 'Women' },
+    { label: t('Other'), value: 'Other' },
   ];
-  
+   const professionlist = [
+    { label: t('Operaio'), value: 'Operaio' },
+    { label: t('Libero professionista'), value: 'Libero professionista' },
+    { label: t('Studente'), value: 'Studente' },
+    { label: t('Disoccupato'), value: 'Disoccupato' },
+    { label: t('Pensionato'), value: 'Pensionato' },
+    { label: t('Altro'), value: 'Altro' },
+  ];
+
+
   const agelist = [
     { label: '18-25', value: '18-25' },
     { label: '26-44', value: '26-44' },
     { label: '45-over', value: '45-over' },
   ];
   const eyecolorlist = [
-   { label: 'Brown', value: 'Brown' },
-   { label: 'Blue', value: 'Blue' },
-   { label: 'Green', value: 'Green' },
-   { label: 'Hazel', value: 'Hazel' },
-   { label: 'Gray', value: 'Gray' },
-   { label: 'Black', value: 'Black' },
-   { label: 'Other', value: 'Other' },
+   { label: t('Brown'), value: 'Brown' },
+   { label: t('Blue'), value: 'Blue' },
+   { label: t('Green'), value: 'Green' },
+   { label: t('Hazel'), value: 'Hazel' },
+   { label: t('Gray'), value: 'Gray' },
+   { label: t('Black'), value: 'Black' },
+   { label: t('Other'), value: 'Other' },
  ];
   const haircolorlist = [
-   { label: 'Black', value: 'Black' },
-   { label: 'Brown', value: 'Brown' },
-   { label: 'Blonde', value: 'Blonde' },
-   { label: 'Red', value: 'Red' },
-   { label: 'Gray', value: 'Gray' },
-   { label: 'White', value: 'White' },
-   { label: 'Bald', value: 'Bald' },
-   { label: 'Other', value: 'Other' },
+   { label: t('Black'), value: 'Black' },
+   { label: t('Brown'), value: 'Brown' },
+   { label: t('Blonde'), value: 'Blonde' },
+   { label: t('Red'), value: 'Red' },
+   { label: t('Gray'), value: 'Gray' },
+   { label: t('White'), value: 'White' },
+   { label: t('Bald'), value: 'Bald' },
+   { label: t('Other'), value: 'Other' },
  ];
   const relationshiplist = [
-   { label: 'Single', value: 'Single' },
-   { label: 'Engaged', value: 'Engaged' },
-   { label: 'Married', value: 'Married' },
-   { label: 'Divorced', value: 'Divorced' },
-   { label: 'Cohabiting', value: 'Cohabiting' },
+   { label: t('Single'), value: 'Single' },
+   { label: t('Engaged'), value: 'Engaged' },
+   { label: t('Married'), value: 'Married' },
+   { label: t('Divorced'), value: 'Divorced' },
+   { label: t('Cohabiting'), value: 'Cohabiting' },
  ];
  const heightUnits = [
     { label: 'CM', value: 'CM' },
@@ -241,15 +251,15 @@ const zodiac = getZodiacSign(day, month);
           ref={dropdownRef}
           data={genderlist}
           labelField="label"
-          valueField="label"
+          valueField="value"
           placeholder={t("Select gender")}
           value={userDetail?.gender}
-          onChange={item => setUserDetail({...userDetail, gender: item.label})}
+          onChange={item => setUserDetail({...userDetail, gender: item.value})}
           renderItem={dditem => (
             <TouchableOpacity
               style={styles.itemContainer}
               onPress={() => {
-                setUserDetail({ ...userDetail, gender: dditem.label });
+                setUserDetail({ ...userDetail, gender: dditem.value });
                 dropdownRef.current?.close();
               }}>
               <Text style={styles.itemText}>{dditem.label}</Text>
@@ -282,13 +292,40 @@ const zodiac = getZodiacSign(day, month);
         <Text style={styles.require}>{t("Number is required")}</Text>
       )}
         <Text style={styles.label}>{t("Profession")}</Text>
-        <TextInput
+        {/* <TextInput
           style={styles.input}
           // editable={edit}
           placeholder={t("Enter Profession")}
           value={userDetail?.profession}
           onChangeText={profession => setUserDetail({...userDetail, profession})}
           placeholderTextColor={Constants.greish_pink}
+        /> */}
+        <Dropdown
+          ref={dropdownRef8}
+          data={professionlist}
+          labelField="label"
+          valueField="value"
+          placeholder={t("Select profession")}
+          value={userDetail?.profession}
+          onChange={item => setUserDetail({...userDetail, profession: item.value})}
+          renderItem={dditem => (
+            <TouchableOpacity
+              style={styles.itemContainer}
+              onPress={() => {
+                setUserDetail({ ...userDetail, profession: dditem.value });
+                dropdownRef8.current?.close();
+              }}>
+              <Text style={styles.itemText}>{dditem.label}</Text>
+            </TouchableOpacity>
+          )}
+          style={styles.dropdown}
+          containerStyle={styles.dropdownContainer}
+          placeholderStyle={styles.placeholder}
+          selectedTextStyle={styles.selectedText}
+          itemTextStyle={styles.itemText}
+          itemContainerStyle={styles.itemContainerStyle}
+          selectedItemStyle={styles.selectedStyle}
+          iconColor={Constants.black}
         />
       {submitted && !userDetail.profession && (
         <Text style={styles.require}>{t("Profession is required")}</Text>
@@ -361,15 +398,15 @@ const zodiac = getZodiacSign(day, month);
           ref={dropdownRef7}
           data={heightUnits}
           labelField="label"
-          valueField="label"
+          valueField="value"
           placeholder={t("Select height unit")}
           value={userDetail?.height_unit}
-          onChange={item => setUserDetail({...userDetail, height_unit: item.label})}
+          onChange={item => setUserDetail({...userDetail, height_unit: item.value})}
           renderItem={dditem => (
             <TouchableOpacity
               style={styles.itemContainer}
               onPress={() => {
-                setUserDetail({ ...userDetail, height_unit: dditem.label });
+                setUserDetail({ ...userDetail, height_unit: dditem.value });
                 dropdownRef7.current?.close();
               }}>
               <Text style={styles.itemText}>{dditem.label}</Text>
@@ -396,15 +433,15 @@ const zodiac = getZodiacSign(day, month);
           ref={dropdownRef4}
           data={eyecolorlist}
           labelField="label"
-          valueField="label"
+          valueField="value"
           placeholder={t("Select eye colour")}
           value={userDetail?.eyeColor}
-          onChange={item => setUserDetail({...userDetail, eyeColor: item.label})}
+          onChange={item => setUserDetail({...userDetail, eyeColor: item.value})}
           renderItem={dditem => (
             <TouchableOpacity
               style={styles.itemContainer}
               onPress={() => {
-                setUserDetail({ ...userDetail, eyeColor: dditem.label });
+                setUserDetail({ ...userDetail, eyeColor: dditem.value });
                 dropdownRef4.current?.close();
               }}>
               <Text style={styles.itemText}>{dditem.label}</Text>
@@ -428,15 +465,15 @@ const zodiac = getZodiacSign(day, month);
           ref={dropdownRef5}
           data={haircolorlist}
           labelField="label"
-          valueField="label"
+          valueField="value"
           placeholder={t("Select hair colour")}
           value={userDetail?.hairColor}
-          onChange={item => setUserDetail({...userDetail, hairColor: item.label})}
+          onChange={item => setUserDetail({...userDetail, hairColor: item.value})}
           renderItem={dditem => (
             <TouchableOpacity
               style={styles.itemContainer}
               onPress={() => {
-                setUserDetail({ ...userDetail, hairColor: dditem.label });
+                setUserDetail({ ...userDetail, hairColor: dditem.value });
                 dropdownRef5.current?.close();
               }}>
               <Text style={styles.itemText}>{dditem.label}</Text>
@@ -459,15 +496,15 @@ const zodiac = getZodiacSign(day, month);
           ref={dropdownRef6}
           data={relationshiplist}
           labelField="label"
-          valueField="label"
+          valueField="value"
           placeholder={t("Select Relationship Status")}
           value={userDetail?.relationship_status}
-          onChange={item => setUserDetail({...userDetail, relationship_status: item.label})}
+          onChange={item => setUserDetail({...userDetail, relationship_status: item.value})}
           renderItem={dditem => (
             <TouchableOpacity
               style={styles.itemContainer}
               onPress={() => {
-                setUserDetail({ ...userDetail, relationship_status: dditem.label });
+                setUserDetail({ ...userDetail, relationship_status: dditem.value });
                 dropdownRef6.current?.close();
               }}>
               <Text style={styles.itemText}>{dditem.label}</Text>
@@ -491,15 +528,15 @@ const zodiac = getZodiacSign(day, month);
           ref={dropdownRef2}
           data={genderlist}
           labelField="label"
-          valueField="label"
-          placeholder="Select gender"
+          valueField="value"
+          placeholder={t("Select gender")}
           value={userDetail?.looking_for}
-          onChange={item => setUserDetail({...userDetail, looking_for: item.label})}
+          onChange={item => setUserDetail({...userDetail, looking_for: item.value})}
           renderItem={dditem => (
             <TouchableOpacity
               style={styles.itemContainer}
               onPress={() => {
-                setUserDetail({ ...userDetail, looking_for: dditem.label });
+                setUserDetail({ ...userDetail, looking_for: dditem.value });
                 dropdownRef2.current?.close();
               }}>
               <Text style={styles.itemText}>{dditem.label}</Text>
@@ -523,15 +560,15 @@ const zodiac = getZodiacSign(day, month);
           ref={dropdownRef3}
           data={agelist}
           labelField="label"
-          valueField="label"
+          valueField="value"
           placeholder={t("Select age range")}
           value={userDetail?.age_range}
-          onChange={item => setUserDetail({...userDetail, age_range: item.label})}
+          onChange={item => setUserDetail({...userDetail, age_range: item.value})}
           renderItem={dditem => (
             <TouchableOpacity
               style={styles.itemContainer}
               onPress={() => {
-                setUserDetail({ ...userDetail, age_range: dditem.label });
+                setUserDetail({ ...userDetail, age_range: dditem.value });
                 dropdownRef3.current?.close();
               }}>
               <Text style={styles.itemText}>{dditem.label}</Text>
